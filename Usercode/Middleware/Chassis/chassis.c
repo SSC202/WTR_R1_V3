@@ -21,12 +21,12 @@ void m_CAN_Message_Task(void *argument);
  */
 void m_Chassis_Init(void)
 {
-    fdcan1.CAN_Rx_Filter_Init();
-    fdcan2.CAN_Rx_Filter_Init();
-    fdcan1.CAN_Start();
-    fdcan2.CAN_Start();
-    fdcan1.CAN_Interrupt_Init();
-    fdcan2.CAN_Interrupt_Init();
+    fdcan1.FDCAN_Rx_Filter_Init();
+    fdcan2.FDCAN_Rx_Filter_Init();
+    fdcan1.FDCAN_Start();
+    fdcan2.FDCAN_Start();
+    fdcan1.FDCAN_Interrupt_Init();
+    fdcan2.FDCAN_Interrupt_Init();
     hDJI[0][0].motorType = M3508;
     hDJI[1][0].motorType = M3508;
     hDJI[2][0].motorType = M3508;
