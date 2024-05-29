@@ -42,21 +42,10 @@
 /**************************************变量定义**********************************************/
 __section("._D1_Area") UnitreeMotor unitree_motor_right;
 __section("._D1_Area") UnitreeMotor unitree_motor_left;
-float unitree_offset_right;
-float unitree_offset_left;
 /**************************************用户函数**********************************************/
 /**
  * @brief   创建电机对象
  */
-// UnitreeMotor *Unitree_Create_Motor()
-// {
-// #ifdef USE_FREERTOS
-//     UnitreeMotor *instance = (UnitreeMotor *)pvPortMalloc(sizeof(UnitreeMotor));
-// #else
-//     UnitreeMotor *instance = (UnitreeMotor *)malloc(sizeof(UnitreeMotor));
-// #endif
-//     return instance;
-// }
 
 /**
  * 电机初始化自检
@@ -135,8 +124,6 @@ void Unitree_User_Init(void)
 {
     int cnt = 0;
     osDelay(2);
-    // unitree_motor_left = Unitree_Create_Motor();
-    osDelay(2);
     while (Unitree_init(&unitree_motor_right, &UART_UNITREE_HANDLER, 0) != HAL_OK) {
         cnt++;
         if (cnt == 500) {
@@ -145,33 +132,27 @@ void Unitree_User_Init(void)
         }
         osDelay(1);
     }
-    // while (Unitree_init(unitree_motor_left, &UART_UNITREE_HANDLER, 1) != HAL_OK) {
-    //     cnt++;
-    //     if (cnt == 500) {
-    //         HAL_GPIO_TogglePin(LED6_GPIO_Port, LED6_Pin);
-    //         cnt = 0;
-    //     }
-    //     osDelay(1);
-    // }
-    // Unitree_Encoder_Autoclibrating(&unitree_motor_right);
-    // Unitree_Encoder_Autoclibrating(unitree_motor_left);
-    // osDelay(7000);
+    while (Unitree_init(&unitree_motor_left, &UART_UNITREE_HANDLER, 1) != HAL_OK) {
+        cnt++;
+        if (cnt == 500) {
+            HAL_GPIO_TogglePin(LED6_GPIO_Port, LED6_Pin);
+            cnt = 0;
+        }
+        osDelay(1);
+    }
+#if (Unitree_Calibration == 1)
+    Unitree_Encoder_Autoclibrating(&unitree_motor_right);
+    Unitree_Encoder_Autoclibrating(&unitree_motor_left);
+    osDelay(7000);
+#else
     Unitree_UART_tranANDrev(&unitree_motor_right, 0, 0, 0, 0, 0, 0, 0);
-    // osDelay(2);
-    // Unitree_UART_tranANDrev(unitree_motor_left, 1, 0, 0, 0, 0, 0, 0);
     osDelay(2);
-    unitree_offset_right = unitree_motor_right.data.Pos;
-    // unitree_offset_left     = unitree_motor_left->data.Pos;
-    // unitree_motor_left_pos  = unitree_offset_left;
-    // unitree_motor_right_pos = unitree_offset_right;
+    Unitree_UART_tranANDrev(&unitree_motor_left, 1, 0, 0, 0, 0, 0, 0);
+    osDelay(2);
+    // 偏移值读取
+    unitree_motor_right.offset = unitree_motor_right.data.Pos;
+    unitree_motor_left.offset  = unitree_motor_left.data.Pos;
+    unitree_motor_right_pos    = unitree_motor_right.offset;
+    unitree_motor_left_pos     = unitree_motor_left.offset;
+#endif
 }
-
-// void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
-// {
-//     if (huart->Instance == &UART_UNITREE_HANDLER) {
-//         uart_decode();
-//         SCB_InvalidateDCache();
-//         //__HAL_UNLOCK(huart);
-//         HAL_UARTEx_ReceiveToIdle_DMA(&UART_UNITREE_HANDLER, (uint8_t *)buffer, 512);
-//     }
-// }

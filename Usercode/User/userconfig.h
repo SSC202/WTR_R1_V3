@@ -6,24 +6,28 @@ extern "C" {
 
 #include "usermain.h"
 
-#define AS69_UART_HANDLE      huart1
-#define AS69_UART             USART1
+#define AS69_UART_HANDLE    huart1
+#define AS69_UART           USART1
 
-#define USE_FREERTOS          1
+#define Unitree_Calibration 0
 
-#define ID_DIRECT             1
-#define ID_HANDLE_SEED        2
-#define ID_HANDLE_BALL        2
-#define ID_AUTO_SEED          2
-#define ID_AUTO_BALL          2
-#define ID_DIRECT_CHOOSE      2
-#define ID_RUN                3
-#define ID_MODE               4
+#define MOVE_STEPLENGTH     0.001 // Unitree步进步长
 
-#define chassis_R             (152 * 0.001) // 全向轮半径
-#define chassis_r             (600 * 0.001) // 底盘半径
-#define PI                    3.1415926
-#define Reduction_ratio       (3591.0f / 187.0f) // M3508减速比
+#define USE_FREERTOS        1
+
+#define ID_DIRECT           1
+#define ID_HANDLE_SEED      2
+#define ID_HANDLE_BALL      2
+#define ID_AUTO_SEED        2
+#define ID_AUTO_BALL        2
+#define ID_DIRECT_CHOOSE    2
+#define ID_RUN              3
+#define ID_MODE             4
+
+#define chassis_R           (152 * 0.001) // 全向轮半径
+#define chassis_r           (600 * 0.001) // 底盘半径
+#define PI                  3.1415926
+#define Reduction_ratio     (3591.0f / 187.0f) // M3508减速比
 
 extern mavlink_joystick_air_dashboard_set_title_t mav_dir_title;
 extern mavlink_joystick_air_dashboard_set_msg_t mav_dir_msg;

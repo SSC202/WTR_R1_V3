@@ -10,6 +10,7 @@ extern "C" {
 
 #include "remotectl.h"
 #include "chassis.h"
+#include "unitree.h"
 
 #include "auto_task.h"
 #include "handle_task.h"
