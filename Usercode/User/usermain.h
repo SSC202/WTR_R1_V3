@@ -11,6 +11,7 @@ extern "C" {
 #include "remotectl.h"
 #include "chassis.h"
 #include "unitree.h"
+#include "servo.h"
 
 #include "auto_task.h"
 #include "handle_task.h"

@@ -120,7 +120,7 @@ void unitree_move_smooth(int id, float move_angle, float KP, float KW)
                 } else if (dir == 1) {
                     unitree_motor_right_pos = unitree_motor_right_pos + MOVE_STEPLENGTH;
                 }
-                osDelay(2);
+                osDelay(1);
             }
             // 最后一步到达目标点
             unitree_motor_right_pos = move_angle;
@@ -136,7 +136,7 @@ void unitree_move_smooth(int id, float move_angle, float KP, float KW)
                 } else if (dir == 1) {
                     unitree_motor_left_pos = unitree_motor_left_pos + MOVE_STEPLENGTH;
                 }
-                osDelay(2);
+                osDelay(1);
             }
             // 最后一步到达目标点
             unitree_motor_left_pos = move_angle;

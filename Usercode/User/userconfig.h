@@ -11,7 +11,7 @@ extern "C" {
 
 #define Unitree_Calibration 0
 
-#define MOVE_STEPLENGTH     0.001 // Unitree步进步长
+#define MOVE_STEPLENGTH     0.01 // Unitree步进步长
 
 #define USE_FREERTOS        1
 
