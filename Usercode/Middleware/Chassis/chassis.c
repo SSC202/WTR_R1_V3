@@ -93,9 +93,17 @@ void m_CAN_Message_Task(void *argument)
         positionServo(arm_angle, &hDJI[4][0]);
         speedServo(-friction_speed_up, &hDJI[6][0]);
         speedServo(friction_speed_down, &hDJI[7][0]);
+        positionServo(motor_r_gripseed, &hDJI[0][1]);
+        positionServo(motor_l_gripseed, &hDJI[1][1]);
+        positionServo(motor_r_plantseed, &hDJI[2][1]);
+        positionServo(motor_l_plantseed, &hDJI[3][1]);
         CanTransmit_DJI_1234(fdcan1, hDJI[0][0].speedPID.output, hDJI[1][0].speedPID.output, hDJI[2][0].speedPID.output, hDJI[3][0].speedPID.output);
-        CanTransmit_DJI_5678(fdcan1, hDJI[4][0].speedPID.output, 0, hDJI[6][0].speedPID.output, hDJI[7][0].speedPID.output);
-        CanTransmit_DJI_1234(fdcan2, 0, 0, 0, 0);
+        if (pick_flag == 1) {
+            CanTransmit_DJI_5678(fdcan1, hDJI[4][0].speedPID.output - 800, 0, hDJI[6][0].speedPID.output, hDJI[7][0].speedPID.output);
+        } else {
+            CanTransmit_DJI_5678(fdcan1, hDJI[4][0].speedPID.output, 0, hDJI[6][0].speedPID.output, hDJI[7][0].speedPID.output);
+        }
+        CanTransmit_DJI_1234(fdcan2, hDJI[0][1].speedPID.output, hDJI[1][1].speedPID.output, hDJI[2][1].speedPID.output, hDJI[3][1].speedPID.output);
         osDelay(1);
     }
 }

@@ -145,10 +145,10 @@ void Unitree_User_Init(void)
     Unitree_Encoder_Autoclibrating(&unitree_motor_left);
     osDelay(7000);
 #else
-    Unitree_UART_tranANDrev(&unitree_motor_right, 0, 0, 0, 0, 0, 0, 0);
-    osDelay(2);
-    Unitree_UART_tranANDrev(&unitree_motor_left, 1, 0, 0, 0, 0, 0, 0);
-    osDelay(2);
+    // Unitree_UART_tranANDrev(&unitree_motor_right, 0, 0, 0, 0, 0, 0, 0);
+    // osDelay(2);
+    // Unitree_UART_tranANDrev(&unitree_motor_left, 1, 0, 0, 0, 0, 0, 0);
+    // osDelay(2);
     // 偏移值读取
     unitree_motor_right.offset = unitree_motor_right.data.Pos;
     unitree_motor_left.offset  = unitree_motor_left.data.Pos;

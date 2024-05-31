@@ -24,5 +24,7 @@ void m_Servo_Init(void)
     HAL_TIM_PWM_Start(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel);
     HAL_TIM_PWM_Start(&Ball_Left_Timer_Handle, Ball_Left_Timer_Channel);
     HAL_TIM_PWM_Start(&Ball_Right_Timer_Handle, Ball_Right_Timer_Channel);
-    
+
+    Ball_Servo_In();
+    Ball_Servo_Grip();   
 }

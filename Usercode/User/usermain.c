@@ -9,16 +9,17 @@ void StartDefaultTask(void *argument)
     // Hardware Init
     m_RemoteCtl_Init(); // 遥控器初始化
     m_Chassis_Init();   // DJI电机初始化
+    m_Servo_Init();
     osDelay(1000);
-    m_Unitree_Init();   // Unitree电机初始化
+    m_Unitree_Init(); // Unitree电机初始化
 
     // Task start
     m_RemoteCtl_Task_Start();          // 遥控器线程
     m_Chassis_CAN_Message_TaskStart(); // CAN通信线程
+    m_Chassis_Ctl_TaskStart();         // 底盘控制线程
     osDelay(2000);
     m_Unitree_Ctl_Message_TaskStart();
     m_Unitree_UART_Message_TaskStart();
-
 
     // Left and Right choose
     do {
@@ -45,7 +46,6 @@ void StartDefaultTask(void *argument)
     // TODO: calibration
 
     // main task entry point
-
     m_main_Task_Start();
     // main run
     static int i = 0;

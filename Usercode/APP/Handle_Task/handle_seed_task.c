@@ -59,7 +59,7 @@ void m_handle_seed_Task(void *argument)
                 Ball_Servo_Grip();
                 Ball_Servo_In();
                 Ball_Servo_Ready();
-                arm_angle           = -160;
+                arm_angle           = -125;
                 friction_speed_up   = 0;
                 friction_speed_down = 0;
                 while (((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
@@ -88,14 +88,14 @@ void m_handle_seed_Task(void *argument)
                 motor_r_gripseed = -695;
                 while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 2.0f) ||
                        ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -2.0f) ||
-                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
-                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
+                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
+                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
                     osDelay(1);
                 }
                 motor_l_plantseed = 0;
                 motor_r_plantseed = 0;
-                while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                        ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                        ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                     osDelay(1);
@@ -130,8 +130,8 @@ void m_handle_seed_Task(void *argument)
                     motor_r_gripseed = -5;
                     while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 2.0f) ||
                            ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -2.0f) ||
-                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
-                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
+                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
+                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
                         osDelay(1);
                     }
                 }
@@ -152,8 +152,8 @@ void m_handle_seed_Task(void *argument)
                     motor_r_gripseed = -695;
                     while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 2.0f) ||
                            ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -2.0f) ||
-                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
-                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
+                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
+                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
                         osDelay(1);
                     }
                 }
@@ -173,8 +173,8 @@ void m_handle_seed_Task(void *argument)
                     osDelay(1000);
                     motor_l_plantseed = 385;
                     motor_r_plantseed = -385;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
@@ -182,8 +182,8 @@ void m_handle_seed_Task(void *argument)
                     osDelay(500);
                     motor_l_plantseed = 2;
                     motor_r_plantseed = -2;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
@@ -234,8 +234,8 @@ void m_handle_seed_Task(void *argument)
                     Seed_Deposit_Buffer_Close();
                     motor_l_plantseed = 385;
                     motor_r_plantseed = -385;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
@@ -243,8 +243,8 @@ void m_handle_seed_Task(void *argument)
                     osDelay(500);
                     motor_l_plantseed = 2;
                     motor_r_plantseed = -2;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
@@ -271,16 +271,16 @@ void m_handle_seed_Task(void *argument)
                     osDelay(5);
                     motor_l_plantseed = 385;
                     motor_r_plantseed = -385;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
                     }
                     motor_l_plantseed = 2;
                     motor_r_plantseed = -2;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
@@ -293,8 +293,8 @@ void m_handle_seed_Task(void *argument)
                     osDelay(5);
                     motor_l_plantseed = deposit_point[seed_count - 1];
                     motor_r_plantseed = -deposit_point[seed_count - 1];
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
@@ -302,8 +302,8 @@ void m_handle_seed_Task(void *argument)
                     osDelay(500);
                     motor_l_plantseed = 2;
                     motor_r_plantseed = -2;
-                    while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
+                    while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
+                           ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);

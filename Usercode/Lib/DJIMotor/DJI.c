@@ -68,23 +68,32 @@ void DJI_Init()
 #if (STM32H723xx || STM32H743xx)
 #if (USE_FDCAN1 == 1)
     for (int i = 0; i < 8; i++) {
-        // 速度环PID
-        hDJI[i][0].speedPID.KP        = 12;
-        hDJI[i][0].speedPID.KI        = 0.2;
-        hDJI[i][0].speedPID.KD        = 5;
-        hDJI[i][0].speedPID.outputMax = 8000;
-
-        // 位置环PID
-        hDJI[i][0].posPID.KP        = 80.0f;
-        hDJI[i][0].posPID.KI        = 1.0f;
-        hDJI[i][0].posPID.KD        = 0.0f;
-        hDJI[i][0].posPID.outputMax = 5000;
-        // hDJI[i].posPID.outputMin = 1500;
-
         if (hDJI[i][0].motorType == M3508) {
             hDJI[i][0].reductionRate = 3591.0f / 187.0f; // 2006减速比为36 3508减速比约为19
+            // 速度环PID
+            hDJI[i][0].speedPID.KP        = 12;
+            hDJI[i][0].speedPID.KI        = 0.15;
+            hDJI[i][0].speedPID.KD        = 5;
+            hDJI[i][0].speedPID.outputMax = 8000;
+            hDJI[i][0].speedPID.outputMin = -8000;
+            // 位置环PID
+            hDJI[i][0].posPID.KP        = 500.0f;
+            hDJI[i][0].posPID.KI        = 10.00f;
+            hDJI[i][0].posPID.KD        = 0.00f;
+            hDJI[i][0].posPID.outputMax = 5000;
         } else if (hDJI[i][0].motorType == M2006) {
             hDJI[i][0].reductionRate = 36.0f;
+            // 速度环PID
+            hDJI[i][0].speedPID.KP        = 20;
+            hDJI[i][0].speedPID.KI        = 0.2;
+            hDJI[i][0].speedPID.KD        = 5;
+            hDJI[i][0].speedPID.outputMax = 8000;
+
+            // 位置环PID
+            hDJI[i][0].posPID.KP        = 500.0f;
+            hDJI[i][0].posPID.KI        = 10.0f;
+            hDJI[i][0].posPID.KD        = 10.0f;
+            hDJI[i][0].posPID.outputMax = 7000;
         }
 
         hDJI[i][0].encoder_resolution = 8192.0f;
@@ -92,23 +101,32 @@ void DJI_Init()
 #endif
 #if (USE_FDCAN2 == 1)
     for (int i = 0; i < 8; i++) {
-        // 速度环PID
-        hDJI[i][1].speedPID.KP        = 12;
-        hDJI[i][1].speedPID.KI        = 0.2;
-        hDJI[i][1].speedPID.KD        = 5;
-        hDJI[i][1].speedPID.outputMax = 8000;
-
-        // 位置环PID
-        hDJI[i][1].posPID.KP        = 80.0f;
-        hDJI[i][1].posPID.KI        = 1.0f;
-        hDJI[i][1].posPID.KD        = 0.0f;
-        hDJI[i][1].posPID.outputMax = 5000;
-        // hDJI[i].posPID.outputMin = 1500;
-
         if (hDJI[i][1].motorType == M3508) {
             hDJI[i][1].reductionRate = 3591.0f / 187.0f; // 2006减速比为36 3508减速比约为19
+                                                         // 速度环PID
+            hDJI[i][1].speedPID.KP        = 12;
+            hDJI[i][1].speedPID.KI        = 0.2;
+            hDJI[i][1].speedPID.KD        = 5;
+            hDJI[i][1].speedPID.outputMax = 8000;
+
+            // 位置环PID
+            hDJI[i][1].posPID.KP        = 500.0f;
+            hDJI[i][1].posPID.KI        = 10.00f;
+            hDJI[i][1].posPID.KD        = 0.0f;
+            hDJI[i][1].posPID.outputMax = 5000;
         } else if (hDJI[i][1].motorType == M2006) {
             hDJI[i][1].reductionRate = 36.0f;
+            // 速度环PID
+            hDJI[i][1].speedPID.KP        = 20;
+            hDJI[i][1].speedPID.KI        = 0.2;
+            hDJI[i][1].speedPID.KD        = 5;
+            hDJI[i][1].speedPID.outputMax = 8000;
+
+            // 位置环PID
+            hDJI[i][1].posPID.KP        = 500.0f;
+            hDJI[i][1].posPID.KI        = 10.0f;
+            hDJI[i][1].posPID.KD        = 10.0f;
+            hDJI[i][1].posPID.outputMax = 7000;
         }
 
         hDJI[i][1].encoder_resolution = 8192.0f;

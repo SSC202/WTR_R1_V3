@@ -63,11 +63,11 @@ void m_handle_Task(void *argument)
                 Ball_Servo_Grip();
                 Ball_Servo_In();
                 Ball_Servo_Ready();
-                arm_angle           = -160;
+                arm_angle           = -125;
                 friction_speed_up   = 0;
                 friction_speed_down = 0;
-                while (((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
-                       ((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
+                while (((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) > 5.0f) ||
+                       ((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) < -5.0f)) {
                     osDelay(1);
                 }
                 // 2. 苗复位状态
@@ -90,18 +90,18 @@ void m_handle_Task(void *argument)
                 Seed_Front_Close();
                 motor_l_gripseed = -695;
                 motor_r_gripseed = -695;
-                while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 2.0f) ||
-                       ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -2.0f) ||
-                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
-                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
+                while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
+                       ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
+                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
+                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
                     osDelay(1);
                 }
                 motor_l_plantseed = 0;
                 motor_r_plantseed = 0;
-                while (((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
-                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
-                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
-                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
+                while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 5.0f) ||
+                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -5.0f) ||
+                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 5.0f) ||
+                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -5.0f)) {
                     osDelay(1);
                 }
                 // 等待转换指令

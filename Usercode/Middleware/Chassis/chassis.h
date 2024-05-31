@@ -29,6 +29,8 @@ void m_Chassis_CAN_Message_TaskStart(void);
 void m_Chassis_Ctl_TaskStart(void);
 void m_Chassis_Init(void);
 
+void Inverse_kinematic_equation(float vx, float vy, float wc, float *_v_1, float *_v_2, float *_v_3, float *_v_4);
+
 #ifdef __cplusplus
 }
 #endif
