@@ -62,8 +62,8 @@ void m_handle_seed_Task(void *argument)
                 arm_angle           = -125;
                 friction_speed_up   = 0;
                 friction_speed_down = 0;
-                while (((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
-                       ((hDJI[4][0].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
+                while (((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
+                       ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
                     osDelay(1);
                 }
                 // 2. 苗复位状态

@@ -17,8 +17,6 @@ extern enum Handle_Ball_State handle_ball_state;
 
 extern osThreadId_t handle_ball_TaskHandle;
 
-extern int pick_flag;
-
 void m_handle_ball_Task_Start(void);
 
 #ifdef __cplusplus

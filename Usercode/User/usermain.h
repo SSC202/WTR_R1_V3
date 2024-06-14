@@ -9,9 +9,13 @@ extern "C" {
 #include "cmsis_os2.h"
 
 #include "remotectl.h"
+#include "HWT101CT_sdk.h"
+#include "ops_sdk.h"
+#include "gyro.h"
 #include "chassis.h"
 #include "unitree.h"
 #include "servo.h"
+#include "odom.h"
 
 #include "auto_task.h"
 #include "handle_task.h"

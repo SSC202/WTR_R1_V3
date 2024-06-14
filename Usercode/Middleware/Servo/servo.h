@@ -79,7 +79,7 @@ extern "C" {
 
 #define Ball_Servo_Grip()                                                                \
     do {                                                                                 \
-        __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 850); \
+        __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 1000); \
     } while (0) // 夹爪抓取动作
 
 #define Ball_Servo_Reset()                                                                \
