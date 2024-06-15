@@ -1,4 +1,17 @@
 #include "chassis.h"
+/***************************************************************************
+ * 方向定义：
+ * (1) 底盘方向定义
+ *         ^x
+ *         |
+ *     y   |
+ *     <---.
+ * (2)码盘方向定义
+ *         ^-y
+ *         |
+ *     x   |
+ *     <---.
+ */
 
 /****************************************************************************
  * 线程定义
@@ -33,6 +46,13 @@ float motor_r_plantseed;     // 右侧放苗电机位置
 float motor_l_plantseed;     // 左侧放苗电机位置
 
 /****************************************************************************
+ * 底盘运动控制定义
+ */
+C_PID chassis_yaw_pid; // 底盘偏航角PID控制器
+C_PID chassis_y_pid;   // 底盘横向PID控制器
+C_PID chassis_x_pid;   // 底盘纵向PID控制器
+
+/****************************************************************************
  * 电机初始化 CAN消息发送相关函数
  */
 
@@ -60,8 +80,15 @@ void m_Chassis_Init(void)
     hDJI[4][1].motorType = M3508;
     DJI_Init();
     // 机械臂电机修正
-    hDJI[4][1].reductionRate = 72;
+    hDJI[4][1].reductionRate    = 72;
     hDJI[4][1].posPID.outputMax = 4000;
+    // 底盘偏航角控制
+    chassis_yaw_pid.SetPoint = chassis_offset;
+    chassis_pid_init(&chassis_yaw_pid, 0.8, 0.0, 0.2);
+    // chassis_x_pid.SetPoint = 600;
+    // chassis_pid_init(&chassis_x_pid, 0.8, 0.0, 0.2);
+    // chassis_y_pid.SetPoint = 0;
+    // chassis_pid_init(&chassis_y_pid, 0.8, 0.0, 0.2);
 }
 /**
  * @brief   底盘电机CAN消息发送线程创建
@@ -121,11 +148,14 @@ void m_Chassis_Ctl_Task(void *argument)
             // 手动模式下为遥控控制底盘
             mvx = (float)(usr_left_y * 200) / 4000.0;
             mvy = -(float)(usr_left_x * 200) / 4000.0;
+            mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         } else if (run_state == AUTO_MODE) {
-            // TODO：接收自动线程接口传回的消息
+            // 运行PID程序
             mvx = 0;
             mvy = 0;
-            mwc = 0;
+            // mvx = chassis_pos_pid_calc(&chassis_x_pid, (-OPS_Data.pos_y));
+            // mvy = chassis_pos_pid_calc(&chassis_y_pid, OPS_Data.pos_x);
+            mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         }
         Inverse_kinematic_equation(mvx, mvy, mwc, &v_1, &v_2, &v_3, &v_4);
         osDelay(2);
@@ -152,4 +182,69 @@ void Inverse_kinematic_equation(float vx, float vy, float wc, float *_v_1, float
     *_v_2 = (float)(v2 * 60.0) / (2 * PI);
     *_v_3 = (float)(v3 * 60.0) / (2 * PI);
     *_v_4 = (float)(v4 * 60.0) / (2 * PI);
+}
+
+/**************************************PID控制相关函数******************************************** */
+/**
+ * @brief       pid初始化
+ * @param       KP  比例常数
+ * @param       KI  积分常数
+ * @param       KD  微分常数
+ * @retval      无
+ */
+void chassis_pid_init(C_PID *upid, float KP, float KI, float KD)
+{
+    upid->SetPoint    = 0;   /* 设定目标值 */
+    upid->ActualValue = 0.0; /* 期望输出值 */
+    upid->SumError    = 0.0; /* 积分值 */
+    upid->Error       = 0.0; /* Error[1] */
+    upid->LastError   = 0.0; /* Error[-1] */
+    upid->PrevError   = 0.0; /* Error[-2] */
+    upid->Proportion  = KP;  /* 比例常数 Proportional Const */
+    upid->Integral    = KI;  /* 积分常数 Integral Const */
+    upid->Derivative  = KD;  /* 微分常数 Derivative Const */
+}
+
+/**
+ * @brief       底盘偏航角pid闭环控制
+ * @param       *PID：PID结构体变量地址
+ * @param       Feedback_value：当前实际值
+ * @retval      期望输出值
+ */
+float chassis_yaw_pid_calc(C_PID *upid, float Feedback_value)
+{
+    upid->Error = (float)(upid->SetPoint - Feedback_value); /* 计算偏差 */
+
+    if (upid->Error > 180.0f) {
+        upid->Error = 360.0f - upid->Error; /* 偏差修正 */
+    } else if (upid->Error < -180.0f) {
+        upid->Error = 360.f + upid->Error; /* 偏差修正 */
+    }
+
+    upid->SumError += upid->Error;
+    upid->ActualValue = (upid->Proportion * upid->Error)                        /* 比例环节 */
+                        + (upid->Integral * upid->SumError)                     /* 积分环节 */
+                        + (upid->Derivative * (upid->Error - upid->LastError)); /* 微分环节 */
+    upid->LastError = upid->Error;
+
+    return (upid->ActualValue); /* 返回计算后输出的数值 */
+}
+
+/**
+ * @brief       底盘坐标pid闭环控制
+ * @param       *PID：PID结构体变量地址
+ * @param       Feedback_value：当前实际值
+ * @retval      期望输出值
+ */
+float chassis_pos_pid_calc(C_PID *upid, float Feedback_value)
+{
+    upid->Error = (float)(upid->SetPoint - Feedback_value); /* 计算偏差 */
+
+    upid->SumError += upid->Error;
+    upid->ActualValue = (upid->Proportion * upid->Error)                        /* 比例环节 */
+                        + (upid->Integral * upid->SumError)                     /* 积分环节 */
+                        + (upid->Derivative * (upid->Error - upid->LastError)); /* 微分环节 */
+    upid->LastError = upid->Error;
+
+    return (upid->ActualValue); /* 返回计算后输出的数值 */
 }

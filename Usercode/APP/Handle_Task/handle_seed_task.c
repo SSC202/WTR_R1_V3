@@ -115,17 +115,17 @@ void m_handle_seed_Task(void *argument)
                 // 取苗动作
                 /******************************************
                  * 准备取苗动作
-                 *      1. 宇树电机准备位置
+                 *      1. 宇树电机取苗准备位置
                  *      2. 夹爪放松
                  *      3. 取苗门打开
                  *      4. 电机降低
                  */
                 if (seed_count < 6) {
-                    unitree_right_pos = -PI / 2 - 0.3;
-                    unitree_left_pos  = PI / 2 + 0.3;
+                    unitree_right_pos = PI / 2 + 0.3;
+                    unitree_left_pos  = -PI / 2 - 0.3;
                     osDelay(2000);
                     Seed_Deposit();
-                    osDelay(2000);
+                    osDelay(1000);
                     motor_l_gripseed = -5;
                     motor_r_gripseed = -5;
                     while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 2.0f) ||
@@ -141,8 +141,8 @@ void m_handle_seed_Task(void *argument)
                 // 第一段动作
                 if (seed_count < 6) {
                     osDelay(2000);
-                    unitree_right_pos = -PI / 2 + 0.2;
-                    unitree_left_pos  = PI / 2 - 0.2;
+                    unitree_right_pos = PI / 2 - 0.2;
+                    unitree_left_pos  = -PI / 2 + 0.2;
                     osDelay(500);
                     Seed_Grip();
                     osDelay(500);
@@ -160,8 +160,8 @@ void m_handle_seed_Task(void *argument)
                 // 第二段动作
                 if (seed_count < 4) {
                     osDelay(2000);
-                    unitree_right_pos = PI / 2 + 0.2;
-                    unitree_left_pos  = -PI / 2 - 0.2;
+                    unitree_right_pos = -PI / 2 - 0.2;
+                    unitree_left_pos  = PI / 2 + 0.2;
                     osDelay(2000);
                     Seed_Deposit();
                     osDelay(500);
@@ -170,7 +170,7 @@ void m_handle_seed_Task(void *argument)
                     Seed_Deposit_Close();
                     osDelay(200);
                     Seed_Deposit_Buffer_Close();
-                    osDelay(1000);
+                    osDelay(5000);
                     motor_l_plantseed = 385;
                     motor_r_plantseed = -385;
                     while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
@@ -179,7 +179,7 @@ void m_handle_seed_Task(void *argument)
                            ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
                         osDelay(1);
                     }
-                    osDelay(500);
+                    osDelay(300);
                     motor_l_plantseed = 2;
                     motor_r_plantseed = -2;
                     while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
@@ -193,8 +193,8 @@ void m_handle_seed_Task(void *argument)
                     seed_count++;
                 } else if (seed_count == 4) {
                     osDelay(2000);
-                    unitree_right_pos = PI / 2 + 0.2;
-                    unitree_left_pos  = -PI / 2 - 0.2;
+                    unitree_right_pos = -PI / 2 - 0.2;
+                    unitree_left_pos  = PI / 2 + 0.2;
                     osDelay(1000);
                     Seed_Deposit();
                     unitree_right_pos = PI / 4;
@@ -253,8 +253,8 @@ void m_handle_seed_Task(void *argument)
                     osDelay(5);
                     Seed_Deposit_Buffer_Open();
                     osDelay(5);
-                    unitree_right_pos = PI / 2 + 0.2;
-                    unitree_left_pos  = -PI / 2 - 0.2;
+                    unitree_right_pos = -PI / 2 - 0.2;
+                    unitree_left_pos  = PI / 2 + 0.2;
                     osDelay(1000);
                     Seed_Deposit();
                     osDelay(5);

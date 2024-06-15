@@ -128,8 +128,8 @@ extern "C" {
 
 #define Seed_Plant_Open()                                                                            \
     do {                                                                                             \
-        __HAL_TIM_SET_COMPARE(&Left_Plant_Seed_Timer_Handle, Left_Plant_Seed_Timer_Channel, 1130);   \
-        __HAL_TIM_SET_COMPARE(&Right_Plant_Seed_Timer_Handle, Right_Plant_Seed_Timer_Channel, 1870); \
+        __HAL_TIM_SET_COMPARE(&Left_Plant_Seed_Timer_Handle, Left_Plant_Seed_Timer_Channel, 1850);   \
+        __HAL_TIM_SET_COMPARE(&Right_Plant_Seed_Timer_Handle, Right_Plant_Seed_Timer_Channel, 1150); \
     } while (0) // 放苗板打开
 
 #define Seed_Plant_Close()                                                                           \

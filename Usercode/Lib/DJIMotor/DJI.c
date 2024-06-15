@@ -84,7 +84,7 @@ void DJI_Init()
             hDJI[i][0].reductionRate = 36.0f;
             // 速度环PID
             hDJI[i][0].speedPID.KP        = 20;
-            hDJI[i][0].speedPID.KI        = 0.2;
+            hDJI[i][0].speedPID.KI        = 0.1;
             hDJI[i][0].speedPID.KD        = 5;
             hDJI[i][0].speedPID.outputMax = 8000;
 

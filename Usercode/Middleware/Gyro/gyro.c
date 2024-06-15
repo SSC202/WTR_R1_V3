@@ -40,21 +40,22 @@ void m_Chassis_Gyro_TaskStart(void)
  */
 void m_Chassis_Gyro_Task(void *argument)
 {
+    // 陀螺仪进行方向调节
     static float chassis_offset_sum = 0;
     chassis_gyro_state              = 0;
-    osDelay(1000);
-    // 取定前十次读取平均值为陀螺仪初始值
-    for (int i = 0; i < 50; i++) {
-        ProcessData();
-        chassis_offset_sum += gyrodata[2];
-        osDelay(1);
-    }
-    chassis_offset     = chassis_offset_sum / 50.0f;
-    chassis_gyro_state = 1;
-    // 陀螺仪进行方向调节
     for (;;) {
         ProcessData();
         chassis_yaw = gyrodata[2];
-        osDelay(2);
+        if (chassis_gyro_state != 1) {
+            // 获取偏航角偏移量
+            for (int i = 0; i < 5; i++) {
+                chassis_offset_sum += chassis_yaw;
+            }
+            chassis_offset     = chassis_offset_sum / 5.0f;
+            chassis_gyro_state = 1;
+        } else {
+            ;
+        }
+        osDelay(1);
     }
 }
