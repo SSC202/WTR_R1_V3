@@ -38,8 +38,8 @@ void m_auto_seed_Task(void *argument)
                 // 消息发送
                 JoystickSwitchTitle(ID_AUTO_SEED, auto_seed_title, &mav_auto_seed_title);
                 JoystickSwitchMsg(ID_AUTO_SEED, auto_seed_ready_msg, &mav_auto_seed_msg);
-                // TODO：复位状态
-
+                // 复位状态
+                Reset_Action();
                 // 状态转换
                 if (btn_KnobR == 1 && usr_right_x < -500.0f) {
                     auto_seed_state = Auto_Seed_Grip;

@@ -39,60 +39,7 @@ void m_handle_ball_Task(void *argument)
                 JoystickSwitchTitle(ID_HANDLE_BALL, handle_ball_title, &mav_handle_ball_title);
                 JoystickSwitchMsg(ID_HANDLE_BALL, handle_ball_ready_msg, &mav_handle_ball_msg);
                 // 复位状态
-                // 1. 球复位状态
-                /***************************************
-                 * 默认动作
-                 *      1. 左右夹爪内收
-                 *      2. 中夹爪夹取状态
-                 *      3. 供球板打开
-                 *      4. 摩擦轮停止
-                 *      5. 机械臂内收
-                 */
-                Ball_Servo_Grip();
-                Ball_Servo_In();
-                Ball_Servo_Ready();
-                arm_angle           = -125;
-                friction_speed_up   = 0;
-                friction_speed_down = 0;
-                while (((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) > 5.0f) ||
-                       ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -5.0f)) {
-                    osDelay(1);
-                }
-                // 2. 苗复位状态
-                /*******************************************
-                 * 默认动作
-                 *      1. 宇树电机内收；
-                 *      2. 夹取状态；
-                 *      3. 取苗门关闭；
-                 *      4. 放苗门关闭；
-                 *      5. 限位后退至末端；
-                 *      6. 电机处于高位;
-                 *      7. 前侧限位板关闭
-                 */
-                unitree_right_pos = PI / 4;
-                unitree_left_pos  = -PI / 4;
-                osDelay(1000);
-                Seed_Grip();
-                Seed_Deposit_Close();
-                Seed_Plant_Close();
-                Seed_Deposit_Buffer_Open();
-                Seed_Front_Close();
-                motor_l_gripseed = -695;
-                motor_r_gripseed = -695;
-                while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
-                       ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
-                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
-                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
-                    osDelay(1);
-                }
-                motor_l_plantseed = 0;
-                motor_r_plantseed = 0;
-                while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 5.0f) ||
-                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -5.0f) ||
-                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 5.0f) ||
-                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -5.0f)) {
-                    osDelay(1);
-                }
+                Reset_Action();
                 // 状态机转换
                 if (btn_KnobR == 1) {
                     handle_ball_state = Handle_Ball_Pick;
@@ -103,15 +50,7 @@ void m_handle_ball_Task(void *argument)
                 JoystickSwitchTitle(ID_HANDLE_BALL, handle_ball_title, &mav_handle_ball_title);
                 JoystickSwitchMsg(ID_HANDLE_BALL, handle_ball_pick_msg, &mav_handle_ball_msg);
                 // 动作指令
-                Ball_Servo_Reset();
-                osDelay(5);
-                arm_angle = -10;
-                while (((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
-                       ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
-                    osDelay(1);
-                }
-                Ball_Servo_Out();
-                osDelay(5);
+                Ball_Pick_Action();
                 // 状态转换
                 handle_ball_state = Handle_Ball_Fire;
                 break;
@@ -120,25 +59,7 @@ void m_handle_ball_Task(void *argument)
                 JoystickSwitchTitle(ID_HANDLE_BALL, handle_ball_title, &mav_handle_ball_title);
                 JoystickSwitchMsg(ID_HANDLE_BALL, handle_ball_fire_msg, &mav_handle_ball_msg);
                 // 动作指令
-                friction_speed_down = -1000;
-                friction_speed_up   = 4000;
-                osDelay(2000);
-                Ball_Servo_Grip();
-                osDelay(500);
-                arm_angle = -125;
-                while (((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
-                       ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
-                    osDelay(1);
-                }
-                osDelay(1000);
-                Ball_Servo_In();
-                osDelay(1000);
-                Ball_Servo_Reset();
-                osDelay(1000);
-                Ball_Servo_Fire();
-                osDelay(1000);
-                Ball_Servo_Ready();
-                osDelay(2000);
+                Ball_Fire_Action();
                 // 状态转换
                 handle_ball_state = Handle_Ball_Ready;
                 break;

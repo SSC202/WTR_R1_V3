@@ -55,3 +55,20 @@ char auto_ball_title[20]     = "BallWork";
 char auto_ball_ready_msg[20] = "Ready";
 char auto_ball_go_msg[20]    = "Going";
 char auto_ball_fire_msg[20]  = "Fire";
+
+/*****************************************************************************
+ * 点位定义
+ */
+float left_grip_seed_point_x[6]  = {0, 0, 0, 0, 0, 0};                   // 左侧取苗纵向坐标
+float left_grip_seed_point_y[6]  = {0, 0, 0, 0, 0, 0};                   // 左侧取苗横向坐标
+float left_plant_seed_point_x[6] = {0, 0, 0, 0, 0, 0};                   // 左侧放苗纵向坐标
+float left_plant_seed_point_y[6] = {0, 0, 0, 0, 0, 0};                   // 左侧放苗横向坐标
+float left_ball_point_x[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 左侧球纵向坐标
+float left_ball_point_y[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 左侧球横向坐标
+
+float right_grip_seed_point_x[6]  = {0, 0, 0, 0, 0, 0};                   // 右侧取苗纵向坐标
+float right_grip_seed_point_y[6]  = {0, 0, 0, 0, 0, 0};                   // 右侧取苗横向坐标
+float right_plant_seed_point_x[6] = {0, 0, 0, 0, 0, 0};                   // 右侧放苗纵向坐标
+float right_plant_seed_point_y[6] = {0, 0, 0, 0, 0, 0};                   // 右侧放苗横向坐标
+float right_ball_point_x[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 右侧球纵向坐标
+float right_ball_point_y[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 右侧球横向坐标

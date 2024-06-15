@@ -85,10 +85,8 @@ void m_Chassis_Init(void)
     // 底盘偏航角控制
     chassis_yaw_pid.SetPoint = chassis_offset;
     chassis_pid_init(&chassis_yaw_pid, 0.8, 0.0, 0.2);
-    // chassis_x_pid.SetPoint = 600;
-    // chassis_pid_init(&chassis_x_pid, 0.8, 0.0, 0.2);
-    // chassis_y_pid.SetPoint = 0;
-    // chassis_pid_init(&chassis_y_pid, 0.8, 0.0, 0.2);
+    chassis_pid_init(&chassis_x_pid, 0.1, 0.0, 0.0);
+    chassis_pid_init(&chassis_y_pid, 0.1, 0.0, 0.0);
 }
 /**
  * @brief   底盘电机CAN消息发送线程创建
@@ -151,14 +149,12 @@ void m_Chassis_Ctl_Task(void *argument)
             mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         } else if (run_state == AUTO_MODE) {
             // 运行PID程序
-            mvx = 0;
-            mvy = 0;
-            // mvx = chassis_pos_pid_calc(&chassis_x_pid, (-OPS_Data.pos_y));
-            // mvy = chassis_pos_pid_calc(&chassis_y_pid, OPS_Data.pos_x);
+            mvx = chassis_pos_pid_calc(&chassis_x_pid,chassis_x_point);
+            mvy = chassis_pos_pid_calc(&chassis_y_pid,chassis_y_point);
             mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         }
         Inverse_kinematic_equation(mvx, mvy, mwc, &v_1, &v_2, &v_3, &v_4);
-        osDelay(2);
+        osDelay(1);
     }
 }
 

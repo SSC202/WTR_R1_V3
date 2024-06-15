@@ -22,7 +22,8 @@ typedef struct C_PID {
 } C_PID;
 
 extern C_PID chassis_yaw_pid; // 底盘偏航角PID控制器
-
+extern C_PID chassis_y_pid;   // 底盘横向PID控制器
+extern C_PID chassis_x_pid;   // 底盘纵向PID控制器
 
 /****************************************************************************
  * 接口定义

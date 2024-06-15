@@ -14,6 +14,8 @@ enum Handle_Seed_State {
 };
 extern enum Handle_Seed_State handle_seed_state;
 
+extern int deposit_point[4];
+
 extern osThreadId_t handle_seed_TaskHandle;
 
 void m_handle_seed_Task_Start(void);

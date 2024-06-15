@@ -37,8 +37,8 @@ void m_auto_Task(void *argument)
     for (;;) {
         switch (auto_state) {
             case AUTO_IDLE_MODE:
-                // TODO：默认复位状态
-
+                // 默认复位状态
+                Reset_Action();
                 // 挂起线程
                 osThreadSuspend(auto_seed_TaskHandle);
                 osThreadSuspend(auto_ball_TaskHandle);
@@ -47,13 +47,13 @@ void m_auto_Task(void *argument)
                 JoystickDelete(ID_AUTO_BALL, &mav_joystick_del);
                 JoystickSwitchTitle(ID_MODE, mode_title, &mav_mode_title);
                 JoystickSwitchMsg(ID_MODE, mode_idle_msg, &mav_mode_msg);
-                // 1. 转换到手动球状态
+                // 1. 转换到自动球状态
                 if (usr_right_y > 500.0f) {
                     osThreadSuspend(auto_seed_TaskHandle);
                     osThreadResume(auto_ball_TaskHandle);
                     auto_state = AUTO_BALL_MODE;
                 }
-                // 2. 转换到手动苗状态
+                // 2. 转换到自动苗状态
                 if (usr_right_y < -500.0f) {
                     osThreadSuspend(auto_ball_TaskHandle);
                     osThreadResume(auto_seed_TaskHandle);

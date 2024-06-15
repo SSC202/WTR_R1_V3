@@ -51,61 +51,10 @@ void m_handle_Task(void *argument)
                 JoystickSwitchTitle(ID_MODE, mode_title, &mav_mode_title);
                 JoystickSwitchMsg(ID_MODE, mode_idle_msg, &mav_mode_msg);
                 // 复位状态
-                // 1. 球复位状态
-                /***************************************
-                 * 默认动作
-                 *      1. 左右夹爪内收
-                 *      2. 中夹爪夹取状态
-                 *      3. 供球板打开
-                 *      4. 摩擦轮停止
-                 *      5. 机械臂内收
-                 */
-                Ball_Servo_Grip();
-                Ball_Servo_In();
-                Ball_Servo_Ready();
-                arm_angle           = -125;
-                friction_speed_up   = 0;
-                friction_speed_down = 0;
-                while (((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) > 5.0f) ||
-                       ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -5.0f)) {
-                    osDelay(1);
-                }
-                // 2. 苗复位状态
-                /*******************************************
-                 * 默认动作
-                 *      1. 宇树电机内收；
-                 *      2. 夹取状态；
-                 *      3. 取苗门关闭；
-                 *      4. 放苗门关闭；
-                 *      5. 限位后退至末端；
-                 *      6. 电机处于高位;
-                 *      7. 前侧限位板关闭
-                 */
-                unitree_right_pos = PI / 4;
-                unitree_left_pos  = -PI / 4;
-                Seed_Grip();
-                Seed_Deposit_Close();
-                Seed_Plant_Close();
-                Seed_Deposit_Buffer_Open();
-                Seed_Front_Close();
-                motor_l_gripseed = -695;
-                motor_r_gripseed = -695;
-                while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
-                       ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
-                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
-                       ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
-                    osDelay(1);
-                }
-                motor_l_plantseed = 0;
-                motor_r_plantseed = 0;
-                while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 5.0f) ||
-                       ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -5.0f) ||
-                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 5.0f) ||
-                       ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -5.0f)) {
-                    osDelay(1);
-                }
+                Reset_Action();
                 // 等待转换指令
                 // 1. 转换到自动状态
+                // 自动状态入口状态总为空闲状态
                 if (left_switch == 1) {
                     auto_state = AUTO_IDLE_MODE;
                     run_state  = AUTO_MODE;

@@ -19,6 +19,7 @@ extern "C" {
 
 #include "auto_task.h"
 #include "handle_task.h"
+#include "action.h"
 
 #include "userconfig.h"
 #include "userdebug.h"
