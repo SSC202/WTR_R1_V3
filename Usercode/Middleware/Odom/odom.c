@@ -6,8 +6,8 @@ float chassis_y_point = 0; // 底盘横向坐标
 osThreadId_t chassis_odom_TaskHandle;
 const osThreadAttr_t chassis_odom_Task_attributes = {
     .name       = "chassis_odom_Task",
-    .stack_size = 128 * 4,
-    .priority   = (osPriority_t)osPriorityNormal,
+    .stack_size = 256 * 4,
+    .priority   = (osPriority_t)osPriorityHigh,
 };
 
 /**

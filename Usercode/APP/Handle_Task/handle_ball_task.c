@@ -7,7 +7,7 @@ enum Handle_Ball_State handle_ball_state = Handle_Ball_Ready;
 osThreadId_t handle_ball_TaskHandle;
 const osThreadAttr_t handle_ball_Task_attributes = {
     .name       = "handle_ball_Task",
-    .stack_size = 128 * 4,
+    .stack_size = 256 * 4,
     .priority   = (osPriority_t)osPriorityNormal,
 };
 void m_handle_ball_Task(void *argument);

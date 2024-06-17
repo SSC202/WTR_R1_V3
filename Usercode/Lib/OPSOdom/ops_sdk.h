@@ -14,8 +14,8 @@
 #include "stm32h7xx.h"
 #include "usart.h"
 /************************ 用户定义 ***************************/
-#define OPS_UART_HANDLE huart7 // 串口选项
-#define OPS_UART        UART7  // 串口选项
+#define OPS_UART_HANDLE huart2 // 串口选项
+#define OPS_UART        USART2  // 串口选项
 
 /************************ 结构体定义 *************************/
 

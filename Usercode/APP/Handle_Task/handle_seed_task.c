@@ -15,7 +15,7 @@ int deposit_point[4] = {
 osThreadId_t handle_seed_TaskHandle;
 const osThreadAttr_t handle_seed_Task_attributes = {
     .name       = "handle_seed_Task",
-    .stack_size = 128 * 4,
+    .stack_size = 256 * 4,
     .priority   = (osPriority_t)osPriorityNormal,
 };
 void m_handle_seed_Task(void *argument);

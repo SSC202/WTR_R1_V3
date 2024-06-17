@@ -7,7 +7,7 @@ enum Handle_State handle_state;
 osThreadId_t handle_TaskHandle;
 const osThreadAttr_t handle_Task_attributes = {
     .name       = "handle_Task",
-    .stack_size = 128 * 4,
+    .stack_size = 256 * 4,
     .priority   = (osPriority_t)osPriorityNormal,
 };
 void m_handle_Task(void *argument);

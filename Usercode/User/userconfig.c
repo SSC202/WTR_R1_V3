@@ -59,16 +59,16 @@ char auto_ball_fire_msg[20]  = "Fire";
 /*****************************************************************************
  * 点位定义
  */
-float left_grip_seed_point_x[6]  = {0, 0, 0, 0, 0, 0};                   // 左侧取苗纵向坐标
-float left_grip_seed_point_y[6]  = {0, 0, 0, 0, 0, 0};                   // 左侧取苗横向坐标
-float left_plant_seed_point_x[6] = {0, 0, 0, 0, 0, 0};                   // 左侧放苗纵向坐标
-float left_plant_seed_point_y[6] = {0, 0, 0, 0, 0, 0};                   // 左侧放苗横向坐标
-float left_ball_point_x[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 左侧球纵向坐标
-float left_ball_point_y[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 左侧球横向坐标
+float left_grip_seed_point_x[6]  = {185, 185, 185, 185, 185, 185};             // 左侧取苗纵向坐标
+float left_grip_seed_point_y[6]  = {-1240, -1490, -2240, -2490, -3240, -3490}; // 左侧取苗横向坐标
+float left_plant_seed_point_x[6] = {2273, 2273, 2273, 2273, 2273, 2273};       // 左侧放苗纵向坐标
+float left_plant_seed_point_y[6] = {-3193, -2693, -2193, -1693, -1193, -693};  // 左侧放苗横向坐标
+float left_ball_point_x[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};       // 左侧球纵向坐标
+float left_ball_point_y[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};       // 左侧球横向坐标
 
-float right_grip_seed_point_x[6]  = {0, 0, 0, 0, 0, 0};                   // 右侧取苗纵向坐标
-float right_grip_seed_point_y[6]  = {0, 0, 0, 0, 0, 0};                   // 右侧取苗横向坐标
-float right_plant_seed_point_x[6] = {0, 0, 0, 0, 0, 0};                   // 右侧放苗纵向坐标
-float right_plant_seed_point_y[6] = {0, 0, 0, 0, 0, 0};                   // 右侧放苗横向坐标
+float right_grip_seed_point_x[6]  = {185, 185, 185, 185, 185, 185};       // 右侧取苗纵向坐标
+float right_grip_seed_point_y[6]  = {1240, 1490, 2240, 2490, 3240, 3490}; // 右侧取苗横向坐标
+float right_plant_seed_point_x[6] = {2273, 2273, 2273, 2273, 2273, 2273}; // 右侧放苗纵向坐标
+float right_plant_seed_point_y[6] = {3193, 2693, 2193, 1693, 1193, 693};  // 右侧放苗横向坐标
 float right_ball_point_x[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 右侧球纵向坐标
 float right_ball_point_y[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 右侧球横向坐标

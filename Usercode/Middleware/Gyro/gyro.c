@@ -43,18 +43,20 @@ void m_Chassis_Gyro_Task(void *argument)
     // 陀螺仪进行方向调节
     static float chassis_offset_sum = 0;
     chassis_gyro_state              = 0;
+    osDelay(3000);
     for (;;) {
-        ProcessData();
-        chassis_yaw = gyrodata[2];
         if (chassis_gyro_state != 1) {
             // 获取偏航角偏移量
             for (int i = 0; i < 5; i++) {
+                ProcessData();
+                chassis_yaw = gyrodata[2];
                 chassis_offset_sum += chassis_yaw;
             }
             chassis_offset     = chassis_offset_sum / 5.0f;
             chassis_gyro_state = 1;
         } else {
-            ;
+            ProcessData();
+            chassis_yaw = gyrodata[2];
         }
         osDelay(1);
     }

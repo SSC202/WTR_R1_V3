@@ -22,6 +22,7 @@ void StartDefaultTask(void *argument)
     m_Chassis_Odom_Init(); // 码盘初始化
 
     // Task start
+    osDelay(7000);              // 上电后等待系统稳定
     m_RemoteCtl_Task_Start();   // 遥控器线程
     m_Chassis_Gyro_TaskStart(); // 陀螺仪线程
     while (chassis_gyro_state != 1) {
@@ -40,14 +41,10 @@ void StartDefaultTask(void *argument)
         JoystickSwitchMsg(ID_DIRECT_CHOOSE, direct_choose_msg, &mav_dir_choose_msg);
         // 等待选择
         if (btn_KnobR == 1 && usr_right_x > 500.0f) {
-            // TODO: Download Right Mode Data
-
             general_state = RIGHT_MODE;                          // 指定为右侧状态
             JoystickDelete(ID_DIRECT_CHOOSE, &mav_joystick_del); // 取消等待指令
             break;
         } else if (btn_KnobR == 1 && usr_right_x < -500.0f) {
-            // TODO: Download Left Mode Data
-
             general_state = LEFT_MODE;                           // 指定为左侧状态
             JoystickDelete(ID_DIRECT_CHOOSE, &mav_joystick_del); // 取消等待指令
             break;
@@ -68,9 +65,9 @@ void StartDefaultTask(void *argument)
             i = 0;
             HAL_GPIO_TogglePin(LED5_GPIO_Port, LED5_Pin);
         }
-        // sprintf(debug_msg, "x:%d,y:%d", (int)(chassis_x_point), (int)(chassis_y_point));
-        // JoystickSwitchTitle(10, debug_title, &mav_debug_title);
-        // JoystickSwitchMsg(10, debug_msg, &mav_dir_choose_msg);
+        sprintf(debug_msg, "x:%d,y:%d", (int)(chassis_y_point),(int)(chassis_x_point));
+        JoystickSwitchTitle(10, debug_title, &mav_debug_title);
+        JoystickSwitchMsg(10, debug_msg, &mav_dir_choose_msg);
         osDelay(1);
     }
 }

@@ -81,6 +81,23 @@ extern char auto_ball_ready_msg[20];
 extern char auto_ball_go_msg[20];
 extern char auto_ball_fire_msg[20];
 
+/*****************************************************************************
+ * 点位定义
+ */
+extern float left_grip_seed_point_x[6];  // 左侧取苗纵向坐标
+extern float left_grip_seed_point_y[6];  // 左侧取苗横向坐标
+extern float left_plant_seed_point_x[6]; // 左侧放苗纵向坐标
+extern float left_plant_seed_point_y[6]; // 左侧放苗横向坐标
+extern float left_ball_point_x[12];      // 左侧球纵向坐标
+extern float left_ball_point_y[12];      // 左侧球横向坐标
+
+extern float right_grip_seed_point_x[6];  // 右侧取苗纵向坐标
+extern float right_grip_seed_point_y[6];  // 右侧取苗横向坐标
+extern float right_plant_seed_point_x[6]; // 右侧放苗纵向坐标
+extern float right_plant_seed_point_y[6]; // 右侧放苗横向坐标
+extern float right_ball_point_x[12];      // 右侧球纵向坐标
+extern float right_ball_point_y[12];      // 右侧球横向坐标
+
 #ifdef __cplusplus
 }
 #endif
