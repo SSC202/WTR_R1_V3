@@ -291,7 +291,7 @@ void Ball_Pick_Action(void)
  */
 void Ball_Fire_Action(void)
 {
-    friction_speed_down = -1000;
+    friction_speed_down = -500;
     friction_speed_up   = 4000;
     osDelay(2000);
     Ball_Servo_Grip();

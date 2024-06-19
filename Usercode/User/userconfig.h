@@ -71,8 +71,7 @@ extern mavlink_joystick_air_dashboard_set_title_t mav_auto_seed_title;
 extern mavlink_joystick_air_dashboard_set_msg_t mav_auto_seed_msg;
 extern char auto_seed_title[20];
 extern char auto_seed_ready_msg[20];
-extern char auto_seed_grip_msg[20];
-extern char auto_seed_plant_msg[20];
+extern char auto_seed_go_msg[20];
 
 extern mavlink_joystick_air_dashboard_set_title_t mav_auto_ball_title;
 extern mavlink_joystick_air_dashboard_set_msg_t mav_auto_ball_msg;

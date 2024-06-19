@@ -47,12 +47,13 @@ void m_Chassis_Gyro_Task(void *argument)
     for (;;) {
         if (chassis_gyro_state != 1) {
             // 获取偏航角偏移量
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 20; i++) {
                 ProcessData();
                 chassis_yaw = gyrodata[2];
                 chassis_offset_sum += chassis_yaw;
+                osDelay(10);
             }
-            chassis_offset     = chassis_offset_sum / 5.0f;
+            chassis_offset     = chassis_offset_sum / 20.0f;
             chassis_gyro_state = 1;
         } else {
             ProcessData();

@@ -37,6 +37,10 @@ extern int usr_right_y;
 extern int usr_right_x;
 extern int usr_left_y;
 extern int usr_left_x;
+extern float right_knob;
+extern float usr_right_knob;
+extern float left_knob;
+extern float usr_left_knob;
 
 /**
  * @brief   遥控器初始化

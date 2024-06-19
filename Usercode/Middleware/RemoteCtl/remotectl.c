@@ -44,6 +44,10 @@ int usr_right_y;
 int usr_right_x;
 int usr_left_y;
 int usr_left_x;
+float right_knob;
+float left_knob;
+float usr_right_knob;
+float usr_left_knob;
 
 /*****************************************************************************
  *  接口函数定义
@@ -73,6 +77,12 @@ void m_RemoteCtl_Task_Start(void)
  */
 void m_Remotectl_Task(void *argument)
 {
+    static float left_knob_offset;
+    for (int i = 0; i < 10; i++) {
+        left_knob = ReadJoystickKnobsLeft(&msg_joystick_air);
+        osDelay(5);
+    }
+    left_knob_offset = left_knob;
     for (;;) {
         btn_LeftCrossUp     = ReadJoystickButtons(&msg_joystick_air, Btn_LeftCrossUp);
         btn_LeftCrossDown   = ReadJoystickButtons(&msg_joystick_air, Btn_LeftCrossDown);
@@ -100,6 +110,7 @@ void m_Remotectl_Task(void *argument)
         right_y             = ReadJoystickRight_y(&msg_joystick_air);
         left_x              = ReadJoystickLeft_x(&msg_joystick_air);
         left_y              = ReadJoystickLeft_y(&msg_joystick_air);
+        left_knob           = ReadJoystickKnobsLeft(&msg_joystick_air);
         if (right_x < 0.1f && right_x > -0.1f) {
             usr_right_x = 0;
 
@@ -124,6 +135,7 @@ void m_Remotectl_Task(void *argument)
         } else {
             usr_left_y = (int)(left_y * 1000);
         }
+        usr_left_knob = left_knob - left_knob_offset;
         osDelay(1);
     }
 }

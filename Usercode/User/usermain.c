@@ -52,8 +52,6 @@ void StartDefaultTask(void *argument)
         osDelay(1);
     } while (1);
 
-    // TODO: calibration
-
     // main task entry point
     m_main_Task_Start();
     // main run
@@ -65,7 +63,7 @@ void StartDefaultTask(void *argument)
             i = 0;
             HAL_GPIO_TogglePin(LED5_GPIO_Port, LED5_Pin);
         }
-        sprintf(debug_msg, "x:%d,y:%d", (int)(chassis_y_point),(int)(chassis_x_point));
+        sprintf(debug_msg, "right:%d", (int)(usr_right_knob));
         JoystickSwitchTitle(10, debug_title, &mav_debug_title);
         JoystickSwitchMsg(10, debug_msg, &mav_dir_choose_msg);
         osDelay(1);

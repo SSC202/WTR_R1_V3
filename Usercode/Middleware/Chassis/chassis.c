@@ -83,7 +83,7 @@ void m_Chassis_Init(void)
     hDJI[4][1].reductionRate    = 72;
     hDJI[4][1].posPID.outputMax = 4000;
     // 底盘偏航角控制
-    chassis_pid_init(&chassis_yaw_pid, 0.3, 0.0, 0.0);
+    chassis_pid_init(&chassis_yaw_pid, 0.8, 0.0, 0.2);
     // 底盘PID坐标控制
     chassis_pid_init(&chassis_x_pid, 0.1, 0.0, 0.001);
     chassis_pid_init(&chassis_y_pid, 0.1, 0.0, 0.001);
@@ -145,17 +145,26 @@ void m_Chassis_Ctl_Task(void *argument)
     static float mwc;
     for (;;) {
         if (run_state == HANDLE_MODE) {
-            chassis_x_pid.SetPoint   = chassis_x_point;
-            chassis_y_pid.SetPoint   = chassis_y_point;
-            chassis_yaw_pid.SetPoint = chassis_offset;
+            chassis_x_pid.SetPoint = chassis_x_point;
+            chassis_y_pid.SetPoint = chassis_y_point;
+            if(usr_left_knob > -5.0f && usr_left_knob < 5.0f)
+            {
+                chassis_yaw_pid.SetPoint  = chassis_offset;
+            }
+            else
+            {
+                chassis_yaw_pid.SetPoint = chassis_offset - usr_left_knob;
+            }
             // 手动模式下为遥控控制底盘
-            mvx = (float)(usr_left_y * 200) / 4000.0;
-            mvy = -(float)(usr_left_x * 200) / 4000.0;
-            mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+            _mvx = (float)(usr_left_y * 200) / 4000.0;
+            _mvy = -(float)(usr_left_x * 200) / 4000.0;
+            mvx  = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
+            mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
+            mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         } else if (run_state == AUTO_MODE) {
             // 1. 定位计算
             // 取苗定位
-            if (auto_seed_state == Auto_Seed_Grip) {
+            if (auto_seed_state == Auto_Seed_Go) {
                 // 取苗点
                 // 第一航路点
                 if (auto_seed_point_state == Auto_Seed_Find_1Point) {
@@ -259,19 +268,12 @@ void m_Chassis_Ctl_Task(void *argument)
                         chassis_yaw_pid.SetPoint = chassis_offset;
                     }
                 }
-            }
-            // 放苗定位
-            else if (auto_seed_state == Auto_Seed_Plant) {
                 // 放苗点
                 // 第二航路点
-                if (auto_seed_point_state == Auto_Seed_Plant_2Point) {
+                else if (auto_seed_point_state == Auto_Seed_Plant_2Point) {
                     if (general_state == LEFT_MODE) {
-                        chassis_x_pid.SetPoint   = chassis_x_point;
-                        chassis_y_pid.SetPoint   = chassis_y_point;
                         chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
                     } else if (general_state == RIGHT_MODE) {
-                        chassis_x_pid.SetPoint   = chassis_x_point;
-                        chassis_y_pid.SetPoint   = chassis_y_point;
                         chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
                     }
                 }

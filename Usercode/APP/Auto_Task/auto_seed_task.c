@@ -40,14 +40,11 @@ void m_auto_seed_Task(void *argument)
                 // 复位状态
                 Reset_Action();
                 // 状态转换
-                if (btn_KnobR == 1 && usr_right_x < -500.0f) {
-                    auto_seed_state = Auto_Seed_Grip;
-                }
-                if (btn_KnobR == 1 && usr_right_x > 500.0f) {
-                    auto_seed_state = Auto_Seed_Plant;
+                if (btn_KnobR == 1) {
+                    auto_seed_state = Auto_Seed_Go;
                 }
                 break;
-            case Auto_Seed_Grip:
+            case Auto_Seed_Go:
                 // 第一段：寻找第一航路点
                 // 如果此时车点在苗架线以内，先运行到苗架线以外，反之则不用运行至第一航路点(250,250)
                 if (chassis_x_point < 250.0f) {
@@ -194,11 +191,7 @@ void m_auto_seed_Task(void *argument)
                        (chassis_y_point - chassis_y_pid.SetPoint > 30.0f)) {
                     osDelay(1);
                 }
-                // 状态转换
-                auto_seed_state = Auto_Seed_Plant;
-                break;
-            case Auto_Seed_Plant:
-                // 2. 旋转
+                // 4. 旋转
                 auto_seed_point_state = Auto_Seed_Plant_2Point;
                 while ((chassis_yaw - chassis_yaw_pid.SetPoint < -1.0f) ||
                        (chassis_yaw - chassis_yaw_pid.SetPoint > 1.0f)) {
@@ -206,13 +199,14 @@ void m_auto_seed_Task(void *argument)
                 }
                 osDelay(500);
                 auto_seed_point_state = Auto_Seed_Plant_Seed0;
+                osDelay(200);
                 // 3. 开始放苗
                 for (int i = 0; i < 6; i++) {
                     // 等待到达航路点
-                    while ((chassis_x_point - chassis_x_pid.SetPoint < -10.0f) ||
-                           (chassis_x_point - chassis_x_pid.SetPoint > 10.0f) ||
-                           (chassis_y_point - chassis_y_pid.SetPoint < -10.0f) ||
-                           (chassis_y_point - chassis_y_pid.SetPoint > 10.0f)) {
+                    while ((chassis_x_point - chassis_x_pid.SetPoint < -5.0f) ||
+                           (chassis_x_point - chassis_x_pid.SetPoint > 5.0f) ||
+                           (chassis_y_point - chassis_y_pid.SetPoint < -5.0f) ||
+                           (chassis_y_point - chassis_y_pid.SetPoint > 5.0f)) {
                         osDelay(1);
                     }
                     // 放苗
@@ -348,15 +342,10 @@ void m_auto_seed_Task(void *argument)
                 JoystickSwitchTitle(ID_AUTO_SEED, auto_seed_title, &mav_auto_seed_title);
                 JoystickSwitchMsg(ID_AUTO_SEED, auto_seed_ready_msg, &mav_auto_seed_msg);
                 break;
-            case Auto_Seed_Grip:
+            case Auto_Seed_Go:
                 // 消息发送
                 JoystickSwitchTitle(ID_AUTO_SEED, auto_seed_title, &mav_auto_seed_title);
-                JoystickSwitchMsg(ID_AUTO_SEED, auto_seed_grip_msg, &mav_auto_seed_msg);
-                break;
-            case Auto_Seed_Plant:
-                // 消息发送
-                JoystickSwitchTitle(ID_AUTO_SEED, auto_seed_title, &mav_auto_seed_title);
-                JoystickSwitchMsg(ID_AUTO_SEED, auto_seed_plant_msg, &mav_auto_seed_msg);
+                JoystickSwitchMsg(ID_AUTO_SEED, auto_seed_go_msg, &mav_auto_seed_msg);
                 break;
             default:
                 break;

@@ -9,8 +9,7 @@ extern "C" {
 
 enum Auto_Seed_State {
     Auto_Seed_Ready,
-    Auto_Seed_Grip,
-    Auto_Seed_Plant,
+    Auto_Seed_Go,
 };
 extern enum Auto_Seed_State auto_seed_state;
 
