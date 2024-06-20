@@ -38,5 +38,6 @@ uint8_t OPS_Decode(void);
 void OPS_Update_X(float x);
 void OPS_Update_Y(float y);
 void OPS_Update_A(float angle);
+void OPS_calibration(void);
 
 #endif

@@ -63,7 +63,7 @@ void StartDefaultTask(void *argument)
             i = 0;
             HAL_GPIO_TogglePin(LED5_GPIO_Port, LED5_Pin);
         }
-        sprintf(debug_msg, "right:%d", (int)(usr_right_knob));
+        sprintf(debug_msg, "y:%d", (int)(usr_left_y));
         JoystickSwitchTitle(10, debug_title, &mav_debug_title);
         JoystickSwitchMsg(10, debug_msg, &mav_dir_choose_msg);
         osDelay(1);

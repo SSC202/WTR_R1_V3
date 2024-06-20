@@ -1,4 +1,5 @@
 #include "ops_sdk.h"
+#include "userconfig.h"
 #include <stdio.h>
 
 typedef union {
@@ -11,6 +12,7 @@ Posture posture;
 static uint8_t count = 0;
 uint8_t i            = 0;
 uint8_t ch[1];
+char ops_calibration_msg[5] = "ACTR";
 
 /****************************************************************/
 /**
@@ -90,6 +92,7 @@ void OPS_Update_A(float angle)
 uint8_t OPS_Decode(void)
 {
     HAL_UART_Receive_IT(&OPS_UART_HANDLE, (uint8_t *)&ch, 1);
+#if (OPS_Calibration == 0)
     switch (count) {
         case 0:
             if (ch[0] == 0x0d)
@@ -135,6 +138,10 @@ uint8_t OPS_Decode(void)
             count = 0;
             break;
     }
+#endif
+#if (OPS_Calibration == 1)
+    ;
+#endif
     return 0;
 }
 
@@ -144,6 +151,14 @@ uint8_t OPS_Decode(void)
 void OPS_Init(void)
 {
     HAL_UART_Receive_IT(&OPS_UART_HANDLE, (uint8_t *)&ch, 1);
+}
+
+/**
+ * @brief   码盘校准函数
+ */
+void OPS_calibration(void)
+{
+    HAL_UART_Transmit(&OPS_UART_HANDLE, (uint8_t *)ops_calibration_msg, 5, 0xFF);
 }
 
 /**

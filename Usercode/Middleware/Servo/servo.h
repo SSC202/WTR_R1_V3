@@ -6,46 +6,34 @@ extern "C" {
 #include "usermain.h"
 #include "tim.h"
 
+extern char seed_grip_msg[62];
+extern char seed_deposit_msg[62];
+extern char seed_plant_open_msg[32];
+extern char seed_plant_close_msg[32];
+extern char seed_buffer_open_msg[32];
+extern char seed_buffer_close_msg[32];
+
+/*************************************************************
+ * 舵机板指令定义
+ */
+#define Servo_UART_HANDLE huart7
+
 /*************************************************************
  * 舵机定义
  */
-// 左侧放苗板
-#define Left_Plant_Seed_Timer_Handle  htim4
-#define Left_Plant_Seed_Timer_Channel TIM_CHANNEL_4
 // 左侧前限位板
 #define Left_Front_Seed_Timer_Handle  htim4
 #define Left_Front_Seed_Timer_Channel TIM_CHANNEL_3
 // 左侧推苗板
 #define Left_Buffer_Seed_Timer_Handle  htim4
 #define Left_Buffer_Seed_Timer_Channel TIM_CHANNEL_2
-// 左侧轨道限位板
-#define Left_Deposit_Seed_Timer_Handle  htim4
-#define Left_Deposit_Seed_Timer_Channel TIM_CHANNEL_1
-// 左侧左夹爪
-#define Left_Left_Seed_Timer_Handle  htim3
-#define Left_Left_Seed_Timer_Channel TIM_CHANNEL_4
-// 左侧右夹爪
-#define Left_Right_Seed_Timer_Handle  htim3
-#define Left_Right_Seed_Timer_Channel TIM_CHANNEL_3
 
-// 右侧放苗板
-#define Right_Plant_Seed_Timer_Handle  htim5
-#define Right_Plant_Seed_Timer_Channel TIM_CHANNEL_1
 // 右侧前限位板
 #define Right_Front_Seed_Timer_Handle  htim5
 #define Right_Front_Seed_Timer_Channel TIM_CHANNEL_2
 // 右侧推苗板
 #define Right_Buffer_Seed_Timer_Handle  htim5
 #define Right_Buffer_Seed_Timer_Channel TIM_CHANNEL_3
-// 右侧轨道限位板
-#define Right_Deposit_Seed_Timer_Handle  htim5
-#define Right_Deposit_Seed_Timer_Channel TIM_CHANNEL_4
-// 右侧左夹爪
-#define Right_Left_Seed_Timer_Handle  htim8
-#define Right_Left_Seed_Timer_Channel TIM_CHANNEL_3
-// 右侧右夹爪
-#define Right_Right_Seed_Timer_Handle  htim8
-#define Right_Right_Seed_Timer_Channel TIM_CHANNEL_4
 
 // 球推球板
 #define Ball_Pull_Timer_Handle  htim15
@@ -65,30 +53,30 @@ extern "C" {
  */
 
 // 球动作
-#define Ball_Servo_In()                                                                 \
-    do {                                                                                \
-        __HAL_TIM_SET_COMPARE(&Ball_Left_Timer_Handle, Ball_Left_Timer_Channel, 750);  \
+#define Ball_Servo_In()                                                                  \
+    do {                                                                                 \
+        __HAL_TIM_SET_COMPARE(&Ball_Left_Timer_Handle, Ball_Left_Timer_Channel, 750);    \
         __HAL_TIM_SET_COMPARE(&Ball_Right_Timer_Handle, Ball_Right_Timer_Channel, 2250); \
     } while (0) // 左右夹爪动作-----向内收缩
 
-#define Ball_Servo_Out()                                                                \
-    do {                                                                                \
-        __HAL_TIM_SET_COMPARE(&Ball_Left_Timer_Handle, Ball_Left_Timer_Channel, 1750);  \
+#define Ball_Servo_Out()                                                                 \
+    do {                                                                                 \
+        __HAL_TIM_SET_COMPARE(&Ball_Left_Timer_Handle, Ball_Left_Timer_Channel, 1750);   \
         __HAL_TIM_SET_COMPARE(&Ball_Right_Timer_Handle, Ball_Right_Timer_Channel, 1250); \
     } while (0) // 左右夹爪动作-----向外伸张
 
-#define Ball_Servo_Grip()                                                                \
-    do {                                                                                 \
+#define Ball_Servo_Grip()                                                                  \
+    do {                                                                                   \
         __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 1000); \
     } while (0) // 夹爪抓取动作
 
-#define Ball_Servo_Reset()                                                                \
-    do {                                                                                  \
+#define Ball_Servo_Reset()                                                                 \
+    do {                                                                                   \
         __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 2000); \
     } while (0) // 夹爪放松动作
 
-#define Ball_Servo_Ready()                                                            \
-    do {                                                                              \
+#define Ball_Servo_Ready()                                                             \
+    do {                                                                               \
         __HAL_TIM_SET_COMPARE(&Ball_Pull_Timer_Handle, Ball_Pull_Timer_Channel, 1900); \
     } while (0) // 射球准备动作
 
@@ -98,20 +86,16 @@ extern "C" {
     } while (0) // 射球动作
 
 // 苗动作
-#define Seed_Grip()                                                                                  \
-    do {                                                                                             \
-        __HAL_TIM_SET_COMPARE(&Left_Left_Seed_Timer_Handle, Left_Left_Seed_Timer_Channel, 1500);     \
-        __HAL_TIM_SET_COMPARE(&Left_Right_Seed_Timer_Handle, Left_Right_Seed_Timer_Channel, 1500);   \
-        __HAL_TIM_SET_COMPARE(&Right_Left_Seed_Timer_Handle, Right_Left_Seed_Timer_Channel, 1550);   \
-        __HAL_TIM_SET_COMPARE(&Right_Right_Seed_Timer_Handle, Right_Right_Seed_Timer_Channel, 1450); \
+#define Seed_Grip()                                                                    \
+    do {                                                                               \
+        for (int i = 0; i < 5; i++)                                                    \
+            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_grip_msg, 62, 0xFF); \
     } while (0) // 夹爪夹取苗动作
 
-#define Seed_Deposit()                                                                               \
-    do {                                                                                             \
-        __HAL_TIM_SET_COMPARE(&Left_Left_Seed_Timer_Handle, Left_Left_Seed_Timer_Channel, 1700);     \
-        __HAL_TIM_SET_COMPARE(&Left_Right_Seed_Timer_Handle, Left_Right_Seed_Timer_Channel, 1300);   \
-        __HAL_TIM_SET_COMPARE(&Right_Left_Seed_Timer_Handle, Right_Left_Seed_Timer_Channel, 1300);   \
-        __HAL_TIM_SET_COMPARE(&Right_Right_Seed_Timer_Handle, Right_Right_Seed_Timer_Channel, 1600); \
+#define Seed_Deposit()                                                                    \
+    do {                                                                                  \
+        for (int i = 0; i < 5; i++)                                                       \
+            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_deposit_msg, 62, 0xFF); \
     } while (0) // 夹爪放置苗动作
 
 #define Seed_Deposit_Buffer_Open()                                                                     \
@@ -126,39 +110,39 @@ extern "C" {
         __HAL_TIM_SET_COMPARE(&Right_Buffer_Seed_Timer_Handle, Right_Buffer_Seed_Timer_Channel, 1400); \
     } while (0) // 推苗板放下
 
-#define Seed_Plant_Open()                                                                            \
-    do {                                                                                             \
-        __HAL_TIM_SET_COMPARE(&Left_Plant_Seed_Timer_Handle, Left_Plant_Seed_Timer_Channel, 1850);   \
-        __HAL_TIM_SET_COMPARE(&Right_Plant_Seed_Timer_Handle, Right_Plant_Seed_Timer_Channel, 1150); \
+#define Seed_Plant_Open()                                                                    \
+    do {                                                                                     \
+        for (int i = 0; i < 5; i++)                                                          \
+            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_plant_open_msg, 32, 0xFF); \
     } while (0) // 放苗板打开
 
-#define Seed_Plant_Close()                                                                           \
-    do {                                                                                             \
-        __HAL_TIM_SET_COMPARE(&Left_Plant_Seed_Timer_Handle, Left_Plant_Seed_Timer_Channel, 1500);   \
-        __HAL_TIM_SET_COMPARE(&Right_Plant_Seed_Timer_Handle, Right_Plant_Seed_Timer_Channel, 1500); \
+#define Seed_Plant_Close()                                                                    \
+    do {                                                                                      \
+        for (int i = 0; i < 5; i++)                                                           \
+            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_plant_close_msg, 32, 0xFF); \
     } while (0) // 放苗板关闭
 
-#define Seed_Deposit_Close()                                                                            \
-    do {                                                                                                \
-        __HAL_TIM_SET_COMPARE(&Left_Deposit_Seed_Timer_Handle, Left_Deposit_Seed_Timer_Channel, 1600);   \
-        __HAL_TIM_SET_COMPARE(&Right_Deposit_Seed_Timer_Handle, Right_Deposit_Seed_Timer_Channel, 1600); \
+#define Seed_Deposit_Close()                                                                   \
+    do {                                                                                       \
+        for (int i = 0; i < 5; i++)                                                            \
+            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_buffer_close_msg, 32, 0xFF); \
     } while (0) // 轨道限位板关闭
 
-#define Seed_Deposit_Open()                                                                             \
-    do {                                                                                                \
-        __HAL_TIM_SET_COMPARE(&Left_Deposit_Seed_Timer_Handle, Left_Deposit_Seed_Timer_Channel, 2400);    \
-        __HAL_TIM_SET_COMPARE(&Right_Deposit_Seed_Timer_Handle, Right_Deposit_Seed_Timer_Channel, 600); \
+#define Seed_Deposit_Open()                                                                   \
+    do {                                                                                      \
+        for (int i = 0; i < 5; i++)                                                           \
+            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_buffer_open_msg, 32, 0xFF); \
     } while (0) // 轨道限位板打开
 
-#define Seed_Front_Close()                                                                          \
-    do {                                                                                            \
+#define Seed_Front_Close()                                                                           \
+    do {                                                                                             \
         __HAL_TIM_SET_COMPARE(&Left_Front_Seed_Timer_Handle, Left_Front_Seed_Timer_Channel, 1500);   \
         __HAL_TIM_SET_COMPARE(&Right_Front_Seed_Timer_Handle, Right_Front_Seed_Timer_Channel, 1500); \
     } while (0) // 前侧限位板关闭
 
 #define Seed_Front_Open()                                                                           \
     do {                                                                                            \
-        __HAL_TIM_SET_COMPARE(&Left_Front_Seed_Timer_Handle, Left_Front_Seed_Timer_Channel, 2400);    \
+        __HAL_TIM_SET_COMPARE(&Left_Front_Seed_Timer_Handle, Left_Front_Seed_Timer_Channel, 2400);  \
         __HAL_TIM_SET_COMPARE(&Right_Front_Seed_Timer_Handle, Right_Front_Seed_Timer_Channel, 600); \
     } while (0) // 前侧限位板打开
 

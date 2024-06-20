@@ -147,12 +147,9 @@ void m_Chassis_Ctl_Task(void *argument)
         if (run_state == HANDLE_MODE) {
             chassis_x_pid.SetPoint = chassis_x_point;
             chassis_y_pid.SetPoint = chassis_y_point;
-            if(usr_left_knob > -5.0f && usr_left_knob < 5.0f)
-            {
-                chassis_yaw_pid.SetPoint  = chassis_offset;
-            }
-            else
-            {
+            if (usr_left_knob > -5.0f && usr_left_knob < 5.0f) {
+                chassis_yaw_pid.SetPoint = chassis_offset;
+            } else {
                 chassis_yaw_pid.SetPoint = chassis_offset - usr_left_knob;
             }
             // 手动模式下为遥控控制底盘
@@ -390,6 +387,20 @@ void m_Chassis_Ctl_Task(void *argument)
             // 2. 底盘速度计算
             _mvx = chassis_pos_pid_calc(&chassis_x_pid, chassis_x_point);
             _mvy = chassis_pos_pid_calc(&chassis_y_pid, chassis_y_point);
+            mvx  = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
+            mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
+            mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+        } else {
+            chassis_x_pid.SetPoint = chassis_x_point;
+            chassis_y_pid.SetPoint = chassis_y_point;
+            if (usr_left_knob > -5.0f && usr_left_knob < 5.0f) {
+                chassis_yaw_pid.SetPoint = chassis_offset;
+            } else {
+                chassis_yaw_pid.SetPoint = chassis_offset - usr_left_knob;
+            }
+            // 手动模式下为遥控控制底盘
+            _mvx = (float)(usr_left_y * 200) / 4000.0;
+            _mvy = -(float)(usr_left_x * 200) / 4000.0;
             mvx  = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
             mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
             mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);

@@ -10,6 +10,7 @@ extern "C" {
 #define AS69_UART           USART1
 
 #define Unitree_Calibration 0
+#define OPS_Calibration     0
 
 #define MOVE_STEPLENGTH     0.01 // Unitree步进步长
 
