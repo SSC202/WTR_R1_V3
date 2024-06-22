@@ -1,11 +1,13 @@
 #include "servo.h"
 
-char seed_grip_msg[62]        = {"{#000P1550T0020!#023P1500T0020!#001P1450T0020!#022P1500T0020!}"};
-char seed_deposit_msg[62]     = {"{#000P1300T0020!#023P1700T0020!#001P1600T0020!#022P1300T0020!}"};
-char seed_plant_open_msg[32]  = {"{#010P1150T0020!#013P1850T0020!}"};
-char seed_plant_close_msg[32] = {"{#010P1500T0020!#013P1500T0020!}"};
-char seed_buffer_close_msg[32] = {"{#011P1600T0020!#012P1600T0020!}"};
-char seed_buffer_open_msg[32] = {"{#011P0600T0020!#012P2400T0020!}"};
+uint8_t servo_flag[3] = {0, 0, 0};
+
+osThreadId_t servo_uart_TaskHandle;
+const osThreadAttr_t servo_uart_Task_attributes = {
+    .name       = "servo_uart_Task",
+    .stack_size = 128 * 4,
+    .priority   = (osPriority_t)osPriorityNormal,
+};
 
 /**
  * @brief 舵机初始化
@@ -26,4 +28,31 @@ void m_Servo_Init(void)
 
     Ball_Servo_In();
     Ball_Servo_Grip();
+}
+
+/**
+ * @brief   舵机线程开启
+ */
+void m_Servo_TaskStart(void)
+{
+    servo_uart_TaskHandle = osThreadNew(m_Servo_Task, NULL, &servo_uart_Task_attributes);
+}
+
+/**
+ * @brief   舵机线程
+ */
+void m_Servo_Task(void *argument)
+{
+    static uint8_t send_buffer[7];
+    send_buffer[0] = 0xAA;
+    send_buffer[1] = 0xAA;
+    send_buffer[5] = 0xBB;
+    send_buffer[6] = 0xBB;
+    for (;;) {
+        send_buffer[2] = servo_flag[0];
+        send_buffer[3] = servo_flag[1];
+        send_buffer[4] = servo_flag[2];
+        HAL_UART_Transmit(&Servo_UART_HANDLE, send_buffer, 7, 0xFF);
+        osDelay(1);
+    }
 }

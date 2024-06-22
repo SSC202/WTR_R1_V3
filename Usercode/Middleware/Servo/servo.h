@@ -6,12 +6,7 @@ extern "C" {
 #include "usermain.h"
 #include "tim.h"
 
-extern char seed_grip_msg[62];
-extern char seed_deposit_msg[62];
-extern char seed_plant_open_msg[32];
-extern char seed_plant_close_msg[32];
-extern char seed_buffer_open_msg[32];
-extern char seed_buffer_close_msg[32];
+extern uint8_t servo_flag[3];
 
 /*************************************************************
  * 舵机板指令定义
@@ -86,16 +81,14 @@ extern char seed_buffer_close_msg[32];
     } while (0) // 射球动作
 
 // 苗动作
-#define Seed_Grip()                                                                    \
-    do {                                                                               \
-        for (int i = 0; i < 5; i++)                                                    \
-            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_grip_msg, 62, 0xFF); \
+#define Seed_Grip()        \
+    do {                   \
+        servo_flag[0] = 1; \
     } while (0) // 夹爪夹取苗动作
 
-#define Seed_Deposit()                                                                    \
-    do {                                                                                  \
-        for (int i = 0; i < 5; i++)                                                       \
-            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_deposit_msg, 62, 0xFF); \
+#define Seed_Deposit()     \
+    do {                   \
+        servo_flag[0] = 0; \
     } while (0) // 夹爪放置苗动作
 
 #define Seed_Deposit_Buffer_Open()                                                                     \
@@ -110,28 +103,24 @@ extern char seed_buffer_close_msg[32];
         __HAL_TIM_SET_COMPARE(&Right_Buffer_Seed_Timer_Handle, Right_Buffer_Seed_Timer_Channel, 1400); \
     } while (0) // 推苗板放下
 
-#define Seed_Plant_Open()                                                                    \
-    do {                                                                                     \
-        for (int i = 0; i < 5; i++)                                                          \
-            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_plant_open_msg, 32, 0xFF); \
+#define Seed_Plant_Open()  \
+    do {                   \
+        servo_flag[1] = 1; \
     } while (0) // 放苗板打开
 
-#define Seed_Plant_Close()                                                                    \
-    do {                                                                                      \
-        for (int i = 0; i < 5; i++)                                                           \
-            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_plant_close_msg, 32, 0xFF); \
+#define Seed_Plant_Close() \
+    do {                   \
+        servo_flag[1] = 0; \
     } while (0) // 放苗板关闭
 
-#define Seed_Deposit_Close()                                                                   \
-    do {                                                                                       \
-        for (int i = 0; i < 5; i++)                                                            \
-            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_buffer_close_msg, 32, 0xFF); \
+#define Seed_Deposit_Close() \
+    do {                     \
+        servo_flag[2] = 1;   \
     } while (0) // 轨道限位板关闭
 
-#define Seed_Deposit_Open()                                                                   \
-    do {                                                                                      \
-        for (int i = 0; i < 5; i++)                                                           \
-            HAL_UART_Transmit(&Servo_UART_HANDLE, (uint8_t *)seed_buffer_open_msg, 32, 0xFF); \
+#define Seed_Deposit_Open() \
+    do {                    \
+        servo_flag[2] = 0;  \
     } while (0) // 轨道限位板打开
 
 #define Seed_Front_Close()                                                                           \
@@ -151,6 +140,8 @@ extern char seed_buffer_close_msg[32];
  */
 
 void m_Servo_Init(void);
+void m_Servo_TaskStart(void);
+void m_Servo_Task(void *argument);
 
 #ifdef __cplusplus
 }

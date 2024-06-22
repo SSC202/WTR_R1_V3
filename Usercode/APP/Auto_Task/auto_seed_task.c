@@ -2,7 +2,6 @@
 
 enum Auto_Seed_State auto_seed_state;
 
-enum Auto_Seed_Point_State auto_seed_point_state;
 /*****************************************************************************
  *  线程定义
  */
@@ -34,6 +33,11 @@ void m_auto_seed_Task_Start(void)
  */
 void m_auto_seed_Task(void *argument)
 {
+    static float now_grip_x  = 100;
+    static float last_grip_x = 0;
+    static float now_grip_y  = 100;
+    static float last_grip_y = 0;
+    static int j;
     for (;;) {
         switch (auto_seed_state) {
             case Auto_Seed_Ready:
@@ -48,7 +52,15 @@ void m_auto_seed_Task(void *argument)
                 // 第一段：寻找第一航路点
                 // 如果此时车点在苗架线以内，先运行到苗架线以外，反之则不用运行至第一航路点(250,250)
                 if (chassis_x_point < 250.0f) {
-                    auto_seed_point_state = Auto_Seed_Find_1Point;
+                    if (general_state == LEFT_MODE) {
+                        chassis_x_pid.SetPoint   = 250.0f;
+                        chassis_y_pid.SetPoint   = -250.0f;
+                        chassis_yaw_pid.SetPoint = chassis_offset;
+                    } else if (general_state == RIGHT_MODE) {
+                        chassis_x_pid.SetPoint   = 250.0f;
+                        chassis_y_pid.SetPoint   = 250.0f;
+                        chassis_yaw_pid.SetPoint = chassis_offset;
+                    }
                     osDelay(50);
                     // 运行至第一航路点
                     while ((chassis_x_point - chassis_x_pid.SetPoint < -30.0f) ||
@@ -59,16 +71,44 @@ void m_auto_seed_Task(void *argument)
                     }
                 }
                 // 运行至第一取苗点
-                auto_seed_point_state = Auto_Seed_Grip_Seed0;
+                if (general_state == LEFT_MODE) {
+                    chassis_x_pid.SetPoint   = left_grip_seed_point_x[0];
+                    chassis_y_pid.SetPoint   = left_grip_seed_point_y[0];
+                    chassis_yaw_pid.SetPoint = chassis_offset;
+                } else if (general_state == RIGHT_MODE) {
+                    chassis_x_pid.SetPoint   = right_grip_seed_point_x[0];
+                    chassis_y_pid.SetPoint   = right_grip_seed_point_y[0];
+                    chassis_yaw_pid.SetPoint = chassis_offset;
+                }
                 // 第二段：连续取苗
                 for (int i = 0; i < 6; i++) {
                     // 1. 运行至航路点
-                    while ((chassis_x_point - chassis_x_pid.SetPoint < -20.0f) ||
-                           (chassis_x_point - chassis_x_pid.SetPoint > 20.0f) ||
+                    while ((now_grip_x - last_grip_x > 0.1f) ||
+                           (now_grip_x - last_grip_x < -0.1f) ||
                            (chassis_y_point - chassis_y_pid.SetPoint < -10.0f) ||
                            (chassis_y_point - chassis_y_pid.SetPoint > 10.0f)) {
+                        j++;
+                        if (j == 10) {
+                            last_grip_x = now_grip_x;
+                            now_grip_x  = chassis_x_point;
+                            last_grip_y = now_grip_y;
+                            now_grip_y  = chassis_y_point;
+                            j           = 0;
+                        }
+                        if ((now_grip_y - last_grip_y < 1.0f) && (now_grip_y - last_grip_y > -1.0f)) {
+                            chassis_y_pid.Integral   = 0.00001;
+                            chassis_y_pid.Derivative = 0.0001;
+                        } else {
+                            chassis_y_pid.Integral   = 0.0000;
+                            chassis_y_pid.Derivative = 0.0000;
+                        }
                         osDelay(1);
                     }
+                    chassis_y_pid.Derivative = 0;
+                    chassis_y_pid.Integral   = 0;
+                    now_grip_x               = 100;
+                    last_grip_x              = 0;
+                    j                        = 0;
                     // 2. 开始取苗
                     /******************************************
                      * 准备取苗动作
@@ -94,8 +134,8 @@ void m_auto_seed_Task(void *argument)
                      */
                     // 第一段动作
                     // 宇树电机运动至超过苗轴线
-                    unitree_right_pos = PI / 2 - 0.2;
-                    unitree_left_pos  = -PI / 2 + 0.2;
+                    unitree_right_pos = PI / 2 - 0.3;
+                    unitree_left_pos  = -PI / 2 + 0.3;
                     // 夹紧，开轨道门
                     osDelay(500);
                     Seed_Grip();
@@ -118,13 +158,45 @@ void m_auto_seed_Task(void *argument)
                         osDelay(500);
                         // 此时允许运动至下一点
                         if (i == 0) {
-                            auto_seed_point_state = Auto_Seed_Grip_Seed1;
+                            if (general_state == LEFT_MODE) {
+                                chassis_x_pid.SetPoint   = left_grip_seed_point_x[1];
+                                chassis_y_pid.SetPoint   = left_grip_seed_point_y[1];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            } else if (general_state == RIGHT_MODE) {
+                                chassis_x_pid.SetPoint   = right_grip_seed_point_x[1];
+                                chassis_y_pid.SetPoint   = right_grip_seed_point_y[1];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            }
                         } else if (i == 1) {
-                            auto_seed_point_state = Auto_Seed_Grip_Seed2;
+                            if (general_state == LEFT_MODE) {
+                                chassis_x_pid.SetPoint   = left_grip_seed_point_x[2];
+                                chassis_y_pid.SetPoint   = left_grip_seed_point_y[2];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            } else if (general_state == RIGHT_MODE) {
+                                chassis_x_pid.SetPoint   = right_grip_seed_point_x[2];
+                                chassis_y_pid.SetPoint   = right_grip_seed_point_y[2];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            }
                         } else if (i == 2) {
-                            auto_seed_point_state = Auto_Seed_Grip_Seed3;
+                            if (general_state == LEFT_MODE) {
+                                chassis_x_pid.SetPoint   = left_grip_seed_point_x[3];
+                                chassis_y_pid.SetPoint   = left_grip_seed_point_y[3];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            } else if (general_state == RIGHT_MODE) {
+                                chassis_x_pid.SetPoint   = right_grip_seed_point_x[3];
+                                chassis_y_pid.SetPoint   = right_grip_seed_point_y[3];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            }
                         } else if (i == 3) {
-                            auto_seed_point_state = Auto_Seed_Grip_Seed4;
+                            if (general_state == LEFT_MODE) {
+                                chassis_x_pid.SetPoint   = left_grip_seed_point_x[4];
+                                chassis_y_pid.SetPoint   = left_grip_seed_point_y[4];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            } else if (general_state == RIGHT_MODE) {
+                                chassis_x_pid.SetPoint   = right_grip_seed_point_x[4];
+                                chassis_y_pid.SetPoint   = right_grip_seed_point_y[4];
+                                chassis_yaw_pid.SetPoint = chassis_offset;
+                            }
                         }
                         // 继续
                         osDelay(500);
@@ -162,7 +234,15 @@ void m_auto_seed_Task(void *argument)
                         unitree_right_pos = -PI / 2 - 0.2;
                         unitree_left_pos  = PI / 2 + 0.2;
                         osDelay(500);
-                        auto_seed_point_state = Auto_Seed_Grip_Seed5;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_grip_seed_point_x[5];
+                            chassis_y_pid.SetPoint   = left_grip_seed_point_y[5];
+                            chassis_yaw_pid.SetPoint = chassis_offset;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_grip_seed_point_x[5];
+                            chassis_y_pid.SetPoint   = right_grip_seed_point_y[5];
+                            chassis_yaw_pid.SetPoint = chassis_offset;
+                        }
                         osDelay(500);
                         Seed_Deposit();
                         osDelay(500);
@@ -176,10 +256,23 @@ void m_auto_seed_Task(void *argument)
                     // 最后一个苗，不进门
                     else if (i == 5) {
                         // 前往第二航路点
-                        auto_seed_point_state = Auto_Seed_Grip_2Point;
-                        unitree_right_pos     = PI / 4;
-                        unitree_left_pos      = -PI / 4;
+                        if (general_state == LEFT_MODE) {
+                            chassis_y_pid.Integral   = 0.0;
+                            chassis_y_pid.Derivative = 0.0;
+                            chassis_x_pid.SetPoint   = 400.0f;
+                            chassis_y_pid.SetPoint   = -3500.0f;
+                            chassis_yaw_pid.SetPoint = chassis_offset;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_y_pid.Integral   = 0.0;
+                            chassis_y_pid.Derivative = 0.0;
+                            chassis_x_pid.SetPoint   = 400.0f;
+                            chassis_y_pid.SetPoint   = 3500.0f;
+                            chassis_yaw_pid.SetPoint = chassis_offset;
+                        }
+                        unitree_right_pos = PI / 4;
+                        unitree_left_pos  = -PI / 4;
                         Seed_Grip();
+                        Seed_Deposit_Close();
                         seed_count = 6;
                     }
                     osDelay(1);
@@ -192,13 +285,25 @@ void m_auto_seed_Task(void *argument)
                     osDelay(1);
                 }
                 // 4. 旋转
-                auto_seed_point_state = Auto_Seed_Plant_2Point;
+                if (general_state == LEFT_MODE) {
+                    chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                } else if (general_state == RIGHT_MODE) {
+                    chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                }
                 while ((chassis_yaw - chassis_yaw_pid.SetPoint < -1.0f) ||
                        (chassis_yaw - chassis_yaw_pid.SetPoint > 1.0f)) {
                     osDelay(1);
                 }
                 osDelay(500);
-                auto_seed_point_state = Auto_Seed_Plant_Seed0;
+                if (general_state == LEFT_MODE) {
+                    chassis_x_pid.SetPoint   = left_plant_seed_point_x[0];
+                    chassis_y_pid.SetPoint   = left_plant_seed_point_y[0];
+                    chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                } else if (general_state == RIGHT_MODE) {
+                    chassis_x_pid.SetPoint   = right_plant_seed_point_x[0];
+                    chassis_y_pid.SetPoint   = right_plant_seed_point_y[0];
+                    chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                }
                 osDelay(200);
                 // 3. 开始放苗
                 for (int i = 0; i < 6; i++) {
@@ -221,17 +326,65 @@ void m_auto_seed_Task(void *argument)
                     osDelay(500);
                     // 前往下一航路点
                     if (i == 0) {
-                        auto_seed_point_state = Auto_Seed_Plant_Seed1;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_plant_seed_point_x[1];
+                            chassis_y_pid.SetPoint   = left_plant_seed_point_y[1];
+                            chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_plant_seed_point_x[1];
+                            chassis_y_pid.SetPoint   = right_plant_seed_point_y[1];
+                            chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                        }
                     } else if (i == 1) {
-                        auto_seed_point_state = Auto_Seed_Plant_Seed2;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_plant_seed_point_x[2];
+                            chassis_y_pid.SetPoint   = left_plant_seed_point_y[2];
+                            chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_plant_seed_point_x[2];
+                            chassis_y_pid.SetPoint   = right_plant_seed_point_y[2];
+                            chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                        }
                     } else if (i == 2) {
-                        auto_seed_point_state = Auto_Seed_Plant_Seed3;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_plant_seed_point_x[3];
+                            chassis_y_pid.SetPoint   = left_plant_seed_point_y[3];
+                            chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_plant_seed_point_x[3];
+                            chassis_y_pid.SetPoint   = right_plant_seed_point_y[3];
+                            chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                        }
                     } else if (i == 3) {
-                        auto_seed_point_state = Auto_Seed_Plant_Seed4;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_plant_seed_point_x[4];
+                            chassis_y_pid.SetPoint   = left_plant_seed_point_y[4];
+                            chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_plant_seed_point_x[4];
+                            chassis_y_pid.SetPoint   = right_plant_seed_point_y[4];
+                            chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                        }
                     } else if (i == 4) {
-                        auto_seed_point_state = Auto_Seed_Plant_Seed5;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_plant_seed_point_x[5];
+                            chassis_y_pid.SetPoint   = left_plant_seed_point_y[5];
+                            chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_plant_seed_point_x[5];
+                            chassis_y_pid.SetPoint   = right_plant_seed_point_y[5];
+                            chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                        }
                     } else if (i == 5) {
-                        auto_seed_point_state = Auto_Seed_Plant_3Point;
+                        if (general_state == LEFT_MODE) {
+                            chassis_x_pid.SetPoint   = left_plant_seed_point_x[5];
+                            chassis_y_pid.SetPoint   = left_plant_seed_point_y[5] + 250.0f;
+                            chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                        } else if (general_state == RIGHT_MODE) {
+                            chassis_x_pid.SetPoint   = right_plant_seed_point_x[5];
+                            chassis_y_pid.SetPoint   = right_plant_seed_point_y[5] - 250.0f;
+                            chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                        }
                     }
                     // 脱离接触后关闭放苗门
                     osDelay(1500);
@@ -325,7 +478,15 @@ void m_auto_seed_Task(void *argument)
                        (chassis_y_point - chassis_y_pid.SetPoint > 10.0f)) {
                     osDelay(1);
                 }
-                auto_seed_point_state = Auto_Seed_Plant_4Point;
+                if (general_state == LEFT_MODE) {
+                    chassis_x_pid.SetPoint   = left_plant_seed_point_x[5];
+                    chassis_y_pid.SetPoint   = left_plant_seed_point_y[5] + 250.0f;
+                    chassis_yaw_pid.SetPoint = chassis_offset;
+                } else if (general_state == RIGHT_MODE) {
+                    chassis_x_pid.SetPoint   = right_plant_seed_point_x[5];
+                    chassis_y_pid.SetPoint   = right_plant_seed_point_y[5] - 250.0f;
+                    chassis_yaw_pid.SetPoint = chassis_offset;
+                }
                 while ((chassis_yaw - chassis_yaw_pid.SetPoint < -3.0f) ||
                        (chassis_yaw - chassis_yaw_pid.SetPoint > 3.0f)) {
                     osDelay(1);

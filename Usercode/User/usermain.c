@@ -23,16 +23,11 @@ void StartDefaultTask(void *argument)
 
     // Task start
     osDelay(7000);              // 上电后等待系统稳定
-    m_RemoteCtl_Task_Start();   // 遥控器线程
     m_Chassis_Gyro_TaskStart(); // 陀螺仪线程
     while (chassis_gyro_state != 1) {
         osDelay(1);
     }
-    m_Chassis_CAN_Message_TaskStart();  // CAN通信线程
-    m_Chassis_Ctl_TaskStart();          // 底盘控制线程
-    m_Unitree_Ctl_Message_TaskStart();  // Unitree电机控制线程
-    m_Unitree_UART_Message_TaskStart(); // Unitree电机通信线程
-    m_Chassis_Odom_TaskStart();         // 码盘坐标转换线程
+    m_RemoteCtl_Task_Start(); // 遥控器线程
 
     // Left and Right choose
     do {
@@ -52,6 +47,13 @@ void StartDefaultTask(void *argument)
         osDelay(1);
     } while (1);
 
+    m_Chassis_CAN_Message_TaskStart();  // CAN通信线程
+    m_Chassis_Ctl_TaskStart();          // 底盘控制线程
+    m_Unitree_Ctl_Message_TaskStart();  // Unitree电机控制线程
+    m_Unitree_UART_Message_TaskStart(); // Unitree电机通信线程
+    m_Chassis_Odom_TaskStart();         // 码盘坐标转换线程
+    m_Servo_TaskStart();                // 舵机线程
+
     // main task entry point
     m_main_Task_Start();
     // main run
@@ -63,7 +65,7 @@ void StartDefaultTask(void *argument)
             i = 0;
             HAL_GPIO_TogglePin(LED5_GPIO_Port, LED5_Pin);
         }
-        sprintf(debug_msg, "y:%d", (int)(usr_left_y));
+        sprintf(debug_msg, "right:%d", (int)(chassis_x_point));
         JoystickSwitchTitle(10, debug_title, &mav_debug_title);
         JoystickSwitchMsg(10, debug_msg, &mav_dir_choose_msg);
         osDelay(1);

@@ -25,7 +25,6 @@ extern "C" {
 #include "userdebug.h"
 #include "usermain_task.h"
 
-
 #ifdef __cplusplus
 }
 #endif
