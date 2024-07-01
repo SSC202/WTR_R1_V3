@@ -111,29 +111,33 @@ void m_Remotectl_Task(void *argument)
         left_x              = ReadJoystickLeft_x(&msg_joystick_air);
         left_y              = ReadJoystickLeft_y(&msg_joystick_air);
         left_knob           = ReadJoystickKnobsLeft(&msg_joystick_air);
-        if (right_x < 0.1f && right_x > -0.1f) {
+        if (right_x < 0.15f && right_x > -0.15f) {
             usr_right_x = 0;
-
+        } else if (right_x > 0.15f) {
+            usr_right_x = (int)((right_x - 0.15) * 1000);
         } else {
-            usr_right_x = (int)(right_x * 1000);
+            usr_right_x = (int)((right_x + 0.15) * 1000);
         }
-        if (right_y < 0.1f && right_y > -0.1f) {
+        if (right_y < 0.15f && right_y > -0.15f) {
             usr_right_y = 0;
-
+        } else if (right_y > 0.15f) {
+            usr_right_y = (int)((right_y - 0.15) * 1000);
         } else {
-            usr_right_y = (int)(right_y * 1000);
+            usr_right_y = (int)((right_y + 0.15) * 1000);
         }
-        if (left_x < 0.1f && left_x > -0.1f) {
+        if (left_x < 0.15f && left_x > -0.15f) {
             usr_left_x = 0;
-
+        } else if (left_x > 0.15f) {
+            usr_left_x = (int)((left_x - 0.15) * 1000);
         } else {
-            usr_left_x = (int)(left_x * 1000);
+            usr_left_x = (int)((left_x + 0.15) * 1000);
         }
-        if (left_y < 0.1f && left_y > -0.1f) {
+        if (left_y < 0.15f && left_y > -0.15f) {
             usr_left_y = 0;
-
+        } else if (left_y > 0.15f) {
+            usr_left_y = (int)((left_y - 0.15) * 1000);
         } else {
-            usr_left_y = (int)(left_y * 1000);
+            usr_left_y = (int)((left_y + 0.15) * 1000);
         }
         usr_left_knob = left_knob - left_knob_offset;
         osDelay(1);

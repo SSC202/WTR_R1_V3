@@ -42,8 +42,8 @@ void Reset_Action(void)
     Seed_Plant_Close();
     Seed_Deposit_Buffer_Open();
     Seed_Front_Close();
-    motor_l_gripseed = -695;
-    motor_r_gripseed = -695;
+    motor_l_gripseed = -995;
+    motor_r_gripseed = -995;
     while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
            ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
            ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
@@ -101,8 +101,8 @@ void Seed_Grip_Action(void)
         osDelay(500);
         Seed_Deposit_Open();
         osDelay(500);
-        motor_l_gripseed = -695;
-        motor_r_gripseed = -695;
+        motor_l_gripseed = -995;
+        motor_r_gripseed = -995;
         while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 2.0f) ||
                ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -2.0f) ||
                ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 2.0f) ||
@@ -291,8 +291,8 @@ void Ball_Pick_Action(void)
  */
 void Ball_Fire_Action(void)
 {
-    friction_speed_down = -500;
-    friction_speed_up   = 4000;
+    friction_speed_down = -800;
+    friction_speed_up   = 5000;
     osDelay(2000);
     Ball_Servo_Grip();
     osDelay(500);
@@ -301,7 +301,7 @@ void Ball_Fire_Action(void)
            ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
         osDelay(1);
     }
-    osDelay(1000);
+    osDelay(500);
     Ball_Servo_In();
     osDelay(1000);
     Ball_Servo_Reset();
@@ -309,5 +309,5 @@ void Ball_Fire_Action(void)
     Ball_Servo_Fire();
     osDelay(1000);
     Ball_Servo_Ready();
-    osDelay(2000);
+    osDelay(500);
 }

@@ -119,8 +119,8 @@ void m_auto_seed_Task(void *argument)
                      *      3. 取苗门打开
                      *      4. 电机降低
                      */
-                    unitree_right_pos = PI / 2 + 0.4;
-                    unitree_left_pos  = -PI / 2 - 0.4;
+                    unitree_right_pos = PI / 2 + 0.6;
+                    unitree_left_pos  = -PI / 2 - 0.6;
                     Seed_Deposit();
                     osDelay(500);
                     motor_l_gripseed = -5;
@@ -131,6 +131,7 @@ void m_auto_seed_Task(void *argument)
                            ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -2.0f)) {
                         osDelay(1);
                     }
+
                     /*******************************************
                      * 取苗动作
                      */
@@ -207,6 +208,8 @@ void m_auto_seed_Task(void *argument)
                         osDelay(500);
                         unitree_right_pos = PI / 4;
                         unitree_left_pos  = -PI / 4;
+                        motor_l_gripseed  = -995;
+                        motor_r_gripseed  = -995;
                         osDelay(200);
                         Seed_Deposit_Buffer_Close();
                         osDelay(500);
@@ -280,6 +283,8 @@ void m_auto_seed_Task(void *argument)
                         osDelay(500);
                         unitree_right_pos = PI / 4;
                         unitree_left_pos  = -PI / 4;
+                        motor_l_gripseed  = -995;
+                        motor_r_gripseed  = -995;
                         osDelay(200);
                         Seed_Deposit_Buffer_Open();
                         osDelay(500);

@@ -14,8 +14,8 @@ void StartDefaultTask(void *argument)
     // Hardware Init
     m_RemoteCtl_Init();     // 遥控器初始化
     m_Chassis_Laser_Init(); // 激光初始化
-    m_Chassis_Init();   // DJI电机初始化
-    m_Servo_Init();     // 舵机初始化
+    m_Chassis_Init();       // DJI电机初始化
+    m_Servo_Init();         // 舵机初始化
     osDelay(1000);
     m_Unitree_Init();      // Unitree电机初始化
     m_Chassis_Gyro_Init(); // 陀螺仪初始化
@@ -28,7 +28,9 @@ void StartDefaultTask(void *argument)
     while (chassis_gyro_state != 1) {
         osDelay(1);
     }
-    m_RemoteCtl_Task_Start(); // 遥控器线程
+    m_Chassis_Odom_TaskStart();  // 码盘坐标转换线程
+    m_RemoteCtl_Task_Start();    // 遥控器线程
+    m_Chassis_Laser_TaskStart(); // 激光线程
 
     // Left and Right choose
     do {
@@ -52,9 +54,7 @@ void StartDefaultTask(void *argument)
     m_Chassis_Ctl_TaskStart();          // 底盘控制线程
     m_Unitree_Ctl_Message_TaskStart();  // Unitree电机控制线程
     m_Unitree_UART_Message_TaskStart(); // Unitree电机通信线程
-    m_Chassis_Odom_TaskStart();         // 码盘坐标转换线程
-    m_Chassis_Laser_TaskStart(); // 激光线程
-    m_Servo_TaskStart();                // 舵机线程
+    m_Servo_TaskStart(); // 舵机线程
 
     // main task entry point
     m_main_Task_Start();
@@ -67,7 +67,7 @@ void StartDefaultTask(void *argument)
             i = 0;
             HAL_GPIO_TogglePin(LED5_GPIO_Port, LED5_Pin);
         }
-        sprintf(debug_msg, "x:%d,y:%d", (int)(chassis_x_point), (int)(chassis_y_point));
+        sprintf(debug_msg, "x:%d,y:%d,w:%d", (int)(chassis_x_point), (int)(chassis_y_point),(int)(chassis_yaw));
         JoystickSwitchTitle(10, debug_title, &mav_debug_title);
         JoystickSwitchMsg(10, debug_msg, &mav_dir_choose_msg);
         osDelay(1);

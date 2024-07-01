@@ -150,7 +150,16 @@ void m_Chassis_Ctl_Task(void *argument)
             if (usr_left_knob > -5.0f && usr_left_knob < 5.0f) {
                 chassis_yaw_pid.SetPoint = chassis_offset;
             } else {
-                chassis_yaw_pid.SetPoint = chassis_offset - usr_left_knob;
+                if (usr_left_knob > 5.0f) {
+                    chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob - 5);
+                } else if (usr_left_knob < -5.0f) {
+                    chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob + 5);
+                }
+                if (chassis_yaw_pid.SetPoint > 180.0f) {
+                    chassis_yaw_pid.SetPoint = 180.0f;
+                } else if (chassis_yaw_pid.SetPoint < -180.0f) {
+                    chassis_yaw_pid.SetPoint = -180.0f;
+                }
             }
             // 手动模式下为遥控控制底盘
             _mvx = (float)(usr_left_y * 200) / 4000.0;
@@ -165,7 +174,19 @@ void m_Chassis_Ctl_Task(void *argument)
             mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
             mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         } else {
-            ;
+            chassis_x_pid.SetPoint = chassis_x_point;
+            chassis_y_pid.SetPoint = chassis_y_point;
+            if (usr_left_knob > -5.0f && usr_left_knob < 5.0f) {
+                chassis_yaw_pid.SetPoint = chassis_offset;
+            } else {
+                chassis_yaw_pid.SetPoint = chassis_offset - usr_left_knob;
+            }
+            // 手动模式下为遥控控制底盘
+            _mvx = (float)(usr_left_y * 200) / 4000.0;
+            _mvy = -(float)(usr_left_x * 200) / 4000.0;
+            mvx  = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
+            mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
+            mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         }
         Inverse_kinematic_equation(mvx, mvy, mwc, &v_1, &v_2, &v_3, &v_4);
         osDelay(1);
