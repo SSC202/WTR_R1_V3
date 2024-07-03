@@ -35,8 +35,8 @@ void Reset_Action(void)
      *      6. 电机处于高位;
      *      7. 前侧限位板关闭
      */
-    unitree_right_pos = PI / 4;
-    unitree_left_pos  = -PI / 4;
+    unitree_right_pos = -PI / 2 - 0.2;
+    unitree_left_pos  = PI / 2 + 0.2;
     Seed_Grip();
     Seed_Deposit_Close();
     Seed_Plant_Close();
@@ -291,17 +291,16 @@ void Ball_Pick_Action(void)
  */
 void Ball_Fire_Action(void)
 {
-    friction_speed_down = -800;
-    friction_speed_up   = 5000;
+    friction_speed_down = -600;
+    friction_speed_up   = 4000;
     osDelay(2000);
     Ball_Servo_Grip();
     osDelay(500);
-    arm_angle = -125;
+    arm_angle = -140;
     while (((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) > 2.0f) ||
            ((hDJI[4][1].AxisData.AxisAngle_inDegree - arm_angle) < -2.0f)) {
         osDelay(1);
     }
-    osDelay(500);
     Ball_Servo_In();
     osDelay(1000);
     Ball_Servo_Reset();

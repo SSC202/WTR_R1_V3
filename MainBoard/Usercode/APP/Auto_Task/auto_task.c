@@ -32,6 +32,8 @@ void m_auto_Task_Start(void)
  */
 void m_auto_Task(void *argument)
 {
+    up_flag = 0;
+    go_flag = 0;
     m_auto_seed_Task_Start();
     m_auto_ball_Task_Start();
     for (;;) {

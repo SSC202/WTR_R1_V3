@@ -12,9 +12,11 @@ enum Auto_Ball_State {
     Auto_Ball_Ready, // 默认状态
     Auto_Ball_Wait,  // 等待坐标状态
     Auto_Ball_Go,    // 取球状态
-    Auto_Ball_Fire,  // 射球状态
 };
 extern enum Auto_Ball_State auto_ball_state;
+
+extern uint8_t up_flag;
+extern uint8_t go_flag;
 
 extern osThreadId_t auto_ball_TaskHandle;
 

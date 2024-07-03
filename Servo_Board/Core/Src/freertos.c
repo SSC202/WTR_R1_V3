@@ -183,10 +183,10 @@ void ServoTask(void *argument)
             __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 1550);
             __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 1450);
         } else {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1700);
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 1300);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 1300);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 1600);
+            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1800);
+            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 1200);
+            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 1200);
+            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 1700);
         }
         if (servo_flag[1] == 1) {
             __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 1850);

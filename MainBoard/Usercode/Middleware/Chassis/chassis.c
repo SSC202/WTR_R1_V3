@@ -83,10 +83,10 @@ void m_Chassis_Init(void)
     hDJI[4][1].reductionRate    = 72;
     hDJI[4][1].posPID.outputMax = 4000;
     // 底盘偏航角控制
-    chassis_pid_init(&chassis_yaw_pid, 0.8, 0.0, 0.2);
+    chassis_pid_init(&chassis_yaw_pid, 1.0, 0.0, 0.15);
     // 底盘PID坐标控制
-    chassis_pid_init(&chassis_x_pid, 0.1, 0.0, 0.001);
-    chassis_pid_init(&chassis_y_pid, 0.1, 0.0, 0.001);
+    chassis_pid_init(&chassis_x_pid, 0.1, 0.0, 0.00);
+    chassis_pid_init(&chassis_y_pid, 0.1, 0.0, 0.00);
 }
 /**
  * @brief   底盘电机CAN消息发送线程创建
@@ -155,10 +155,10 @@ void m_Chassis_Ctl_Task(void *argument)
                 } else if (usr_left_knob < -5.0f) {
                     chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob + 5);
                 }
-                if (chassis_yaw_pid.SetPoint > 180.0f) {
-                    chassis_yaw_pid.SetPoint = 180.0f;
-                } else if (chassis_yaw_pid.SetPoint < -180.0f) {
-                    chassis_yaw_pid.SetPoint = -180.0f;
+                if (chassis_yaw_pid.SetPoint > (chassis_offset + 90.0f)) {
+                    chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
+                } else if (chassis_yaw_pid.SetPoint < (chassis_offset - 90.0f)) {
+                    chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
                 }
             }
             // 手动模式下为遥控控制底盘
@@ -168,11 +168,23 @@ void m_Chassis_Ctl_Task(void *argument)
             mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
             mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         } else if (run_state == AUTO_MODE) {
-            _mvx = chassis_pos_pid_calc(&chassis_x_pid, chassis_x_point);
-            _mvy = chassis_pos_pid_calc(&chassis_y_pid, chassis_y_point);
-            mvx  = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
-            mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
-            mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+            if (up_flag == 0) {
+                _mvx = chassis_pos_pid_calc(&chassis_x_pid, chassis_x_point);
+                _mvy = chassis_pos_pid_calc(&chassis_y_pid, chassis_y_point);
+            }
+            else if(up_flag == 1)
+            {
+                _mvx = 60;
+                _mvy = 0;
+            }
+            else if(up_flag == 2)
+            {
+                _mvx = 0;
+                _mvy = 0;
+            }
+            mvx = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
+            mvy = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
+            mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
         } else {
             chassis_x_pid.SetPoint = chassis_x_point;
             chassis_y_pid.SetPoint = chassis_y_point;
@@ -245,12 +257,6 @@ void chassis_pid_init(C_PID *upid, float KP, float KI, float KD)
 float chassis_yaw_pid_calc(C_PID *upid, float Feedback_value)
 {
     upid->Error = (float)(upid->SetPoint - Feedback_value); /* 计算偏差 */
-
-    if (upid->Error > 180.0f) {
-        upid->Error = 360.0f - upid->Error; /* 偏差修正 */
-    } else if (upid->Error < -180.0f) {
-        upid->Error = 360.f + upid->Error; /* 偏差修正 */
-    }
 
     upid->SumError += upid->Error;
     upid->ActualValue = (upid->Proportion * upid->Error)                        /* 比例环节 */

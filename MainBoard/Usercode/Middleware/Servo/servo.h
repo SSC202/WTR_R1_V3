@@ -62,7 +62,7 @@ extern uint8_t servo_flag[3];
 
 #define Ball_Servo_Grip()                                                                  \
     do {                                                                                   \
-        __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 1000); \
+        __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 600); \
     } while (0) // 夹爪抓取动作
 
 #define Ball_Servo_Reset()                                                                 \
@@ -72,7 +72,7 @@ extern uint8_t servo_flag[3];
 
 #define Ball_Servo_Ready()                                                             \
     do {                                                                               \
-        __HAL_TIM_SET_COMPARE(&Ball_Pull_Timer_Handle, Ball_Pull_Timer_Channel, 1900); \
+        __HAL_TIM_SET_COMPARE(&Ball_Pull_Timer_Handle, Ball_Pull_Timer_Channel, 2100); \
     } while (0) // 射球准备动作
 
 #define Ball_Servo_Fire()                                                              \
@@ -95,7 +95,7 @@ extern uint8_t servo_flag[3];
     do {                                                                                               \
         __HAL_TIM_SET_COMPARE(&Left_Buffer_Seed_Timer_Handle, Left_Buffer_Seed_Timer_Channel, 2500);   \
         __HAL_TIM_SET_COMPARE(&Right_Buffer_Seed_Timer_Handle, Right_Buffer_Seed_Timer_Channel, 900); \
-    } while (0) // 推苗板打开
+    } while (0) // 推苗板打开,左2500,右侧900
 
 #define Seed_Deposit_Buffer_Close()                                                                    \
     do {                                                                                               \

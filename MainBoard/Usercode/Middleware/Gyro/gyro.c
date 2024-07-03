@@ -41,6 +41,10 @@ void m_Chassis_Gyro_TaskStart(void)
 void m_Chassis_Gyro_Task(void *argument)
 {
     // 陀螺仪进行方向调节
+    // 逆时针为正向
+    static float gyro_last          = 0;
+    static float gyro_now           = 0;
+    static int gyro_flag            = 0;
     static float chassis_offset_sum = 0;
     chassis_gyro_state              = 0;
     osDelay(3000);
@@ -57,7 +61,14 @@ void m_Chassis_Gyro_Task(void *argument)
             chassis_gyro_state = 1;
         } else {
             ProcessData();
-            chassis_yaw = gyrodata[2];
+            gyro_last = gyro_now;
+            gyro_now  = gyrodata[2];
+            if (gyro_now - gyro_last > 300.0f) {
+                gyro_flag--; // 顺时针跳变
+            } else if (gyro_now - gyro_last < -300.0f) {
+                gyro_flag++; // 逆时针跳变
+            }
+            chassis_yaw = gyro_now + gyro_flag * 360.0f;
         }
         osDelay(1);
     }
