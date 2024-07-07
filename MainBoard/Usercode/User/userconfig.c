@@ -16,6 +16,12 @@ char run_title[20]      = "Run";
 char run_auto_msg[20]   = "AutoMode";
 char run_handle_msg[20] = "HandleMode";
 
+mavlink_joystick_air_dashboard_set_title_t mav_up_choose_title;
+mavlink_joystick_air_dashboard_set_msg_t mav_up_choose_msg;
+char up_choose_title[20]  = "UpChoose";
+char up_choose_msg_ok[20] = "NoNeed_Up";
+char up_choose_msg_no[20] = "Need_Up";
+
 mavlink_joystick_air_dashboard_set_title_t mav_dir_choose_title;
 mavlink_joystick_air_dashboard_set_msg_t mav_dir_choose_msg;
 char direct_choose_title[20] = "DirectChoose";
@@ -57,18 +63,20 @@ char auto_ball_go_msg[20]    = "Going";
 /*****************************************************************************
  * 点位定义
  */
-float left_grip_seed_point_x[6]   = {130, 130, 130, 130, 130, 130};                                                  // 左侧取苗纵向坐标
-float left_grip_seed_point_y[6]   = {-1230, -1480, -2230, -2480, -3230, -3480};                                      // 左侧取苗横向坐标
-float left_plant_seed_point_x[6]  = {1942, 1942, 1942, 1942, 1942, 1942};                                            // 左侧放苗纵向坐标
-float left_plant_seed_point_y[6]  = {-3530, -3030, -2530, -2030, -1530, -530};                                       // 左侧放苗横向坐标
-float left_plant_seed_point_ax[6] = {994, 1494, 1994, 2494, 2994, 3994};                                             // 左侧放苗激光标定点(车前)
-float left_plant_seed_point_ay[6] = {1172, 1172, 1172, 1172, 1172, 1172};                                            // 左侧放苗激光标定点(车侧)
-float left_ball_point_x[12]       = {0, 0, 0, 0, 0, 0, -880, -440, -440, -440, -440, -440};                          // 左侧球纵向坐标
-float left_ball_point_y[12]       = {-655, -1155, -1655, -2155, -2655, -3155, 0, -1155, -1655, -2155, -2655, -3155}; // 左侧球横向坐标
+float left_grip_seed_point_x[6]   = {130, 130, 130, 130, 130, 130};               // 左侧取苗纵向坐标
+float left_grip_seed_point_y[6]   = {-1230, -1480, -2230, -2480, -3230, -3480};   // 左侧取苗横向坐标
+float left_plant_seed_point_x[6]  = {1942, 1942, 1942, 1942, 1942, 1942};         // 左侧放苗纵向坐标
+float left_plant_seed_point_y[6]  = {-3530, -3030, -2530, -2030, -1530, -1030};   // 左侧放苗横向坐标
+float left_plant_seed_point_ax[6] = {984, 1484, 1984, 2484, 2984, 3484};          // 左侧放苗激光标定点(车前)
+float left_plant_seed_point_ay[6] = {1162, 1162, 1162, 1162, 1162, 1162};         // 左侧放苗激光标定点(车侧)
+float left_ball_point_x[7]        = {0, 0, 0, 0, 0, 0, -1120};                    // 左侧球纵向坐标
+float left_ball_point_y[7]        = {-655, -1155, -1655, -2155, -2655, -3155, 0}; // 左侧球横向坐标
 
-float right_grip_seed_point_x[6]  = {130, 130, 130, 130, 130, 130};       // 右侧取苗纵向坐标
-float right_grip_seed_point_y[6]  = {1230, 1480, 2230, 2480, 3230, 3480}; // 右侧取苗横向坐标
-float right_plant_seed_point_x[6] = {1942, 1942, 1942, 1942, 1942, 1942}; // 左侧放苗纵向坐标
-float right_plant_seed_point_y[6] = {3530, 3030, 2530, 2030, 1530, 1030}; // 左侧放苗横向坐标
-float right_ball_point_x[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 右侧球纵向坐标
-float right_ball_point_y[12]      = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // 右侧球横向坐标
+float right_grip_seed_point_x[6]   = {130, 130, 130, 130, 130, 130};       // 右侧取苗纵向坐标
+float right_grip_seed_point_y[6]   = {1230, 1480, 2230, 2480, 3230, 3480}; // 右侧取苗横向坐标
+float right_plant_seed_point_x[6]  = {1942, 1942, 1942, 1942, 1942, 1942}; // 右侧放苗纵向坐标
+float right_plant_seed_point_y[6]  = {3530, 3030, 2530, 2030, 1530, 1030}; // 右侧放苗横向坐标
+float right_plant_seed_point_ax[6] = {984, 1484, 1984, 2484, 2984, 3484};  // 右侧放苗激光标定点(车前)
+float right_plant_seed_point_ay[6] = {1162, 1162, 1162, 1162, 1162, 1162};
+float right_ball_point_x[7]        = {0, 0, 0, 0, 0, 0, -1120};              // 右侧球纵向坐标
+float right_ball_point_y[7]        = {655, 1155, 1655, 2155, 2655, 3155, 0}; // 右侧球横向坐标

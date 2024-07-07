@@ -40,6 +40,7 @@ void m_handle_seed_Task_Start(void)
  */
 void m_handle_seed_Task(void *argument)
 {
+    down_flag = 0;
     for (;;) {
         switch (handle_seed_state) {
             case Handle_Seed_Ready:

@@ -7,10 +7,10 @@
 #define LASER_UART_HANDLE huart6 // 串口选项
 #define LASER_UART        USART6  // 串口选项
 
-extern int chassis_laser_x;
-extern int chassis_laser_y;
+extern __IO int chassis_laser_x;
+extern __IO int chassis_laser_y;
 
-extern uint8_t laser_temp[1];
+extern __IO uint8_t laser_temp[1];
 
 /************************ 用户函数 *************************/
 void Laser_Init(void);

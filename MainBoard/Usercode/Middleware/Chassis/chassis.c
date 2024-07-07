@@ -20,7 +20,7 @@
 osThreadId_t can_message_TaskHandle;
 const osThreadAttr_t can_message_Task_attributes = {
     .name       = "can_message_Task",
-    .stack_size = 128 * 4,
+    .stack_size = 256 * 4,
     .priority   = (osPriority_t)osPriorityHigh1,
 };
 void m_CAN_Message_Task(void *argument);
@@ -28,8 +28,8 @@ void m_CAN_Message_Task(void *argument);
 osThreadId_t chassis_ctl_TaskHandle;
 const osThreadAttr_t chassis_ctl_Task_attributes = {
     .name       = "chassis_ctl_Task",
-    .stack_size = 128 * 4,
-    .priority   = (osPriority_t)osPriorityNormal,
+    .stack_size = 256 * 4,
+    .priority   = (osPriority_t)osPriorityHigh1,
 };
 void m_Chassis_Ctl_Task(void *argument);
 /****************************************************************************
@@ -83,10 +83,10 @@ void m_Chassis_Init(void)
     hDJI[4][1].reductionRate    = 72;
     hDJI[4][1].posPID.outputMax = 4000;
     // 底盘偏航角控制
-    chassis_pid_init(&chassis_yaw_pid, 1.0, 0.0, 0.15);
+    // chassis_pid_init(&chassis_yaw_pid, 1.0, 0.0, 0.15);
     // 底盘PID坐标控制
-    chassis_pid_init(&chassis_x_pid, 0.1, 0.0, 0.00);
-    chassis_pid_init(&chassis_y_pid, 0.1, 0.0, 0.00);
+    // chassis_pid_init(&chassis_x_pid, 0.1, 0.0, 0.001);
+    // chassis_pid_init(&chassis_y_pid, 0.1, 0.0, 0.001);
 }
 /**
  * @brief   底盘电机CAN消息发送线程创建
@@ -145,46 +145,64 @@ void m_Chassis_Ctl_Task(void *argument)
     static float mwc;
     for (;;) {
         if (run_state == HANDLE_MODE) {
-            chassis_x_pid.SetPoint = chassis_x_point;
-            chassis_y_pid.SetPoint = chassis_y_point;
-            if (usr_left_knob > -5.0f && usr_left_knob < 5.0f) {
-                chassis_yaw_pid.SetPoint = chassis_offset;
-            } else {
-                if (usr_left_knob > 5.0f) {
-                    chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob - 5);
-                } else if (usr_left_knob < -5.0f) {
-                    chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob + 5);
+            if (right_switch == 0) {
+                if (usr_left_knob > -5.0f && usr_left_knob < 5.0f) {
+                    chassis_yaw_pid.SetPoint = chassis_offset;
+                } else {
+                    if (usr_left_knob > 5.0f) {
+                        chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob - 5);
+                    } else if (usr_left_knob < -5.0f) {
+                        chassis_yaw_pid.SetPoint = chassis_offset - (usr_left_knob + 5);
+                    }
+                    if (chassis_yaw_pid.SetPoint > (chassis_offset + 170.0f)) {
+                        chassis_yaw_pid.SetPoint = chassis_offset + 170.0f;
+                    } else if (chassis_yaw_pid.SetPoint < (chassis_offset - 170.0f)) {
+                        chassis_yaw_pid.SetPoint = chassis_offset - 170.0f;
+                    }
                 }
-                if (chassis_yaw_pid.SetPoint > (chassis_offset + 90.0f)) {
-                    chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
-                } else if (chassis_yaw_pid.SetPoint < (chassis_offset - 90.0f)) {
+            } else if (right_switch == 1) {
+                if (general_state == LEFT_MODE) {
                     chassis_yaw_pid.SetPoint = chassis_offset - 90.0f;
+                } else if (general_state == RIGHT_MODE) {
+                    chassis_yaw_pid.SetPoint = chassis_offset + 90.0f;
                 }
             }
             // 手动模式下为遥控控制底盘
-            _mvx = (float)(usr_left_y * 200) / 4000.0;
-            _mvy = -(float)(usr_left_x * 200) / 4000.0;
-            mvx  = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
-            mvy  = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
-            mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
-        } else if (run_state == AUTO_MODE) {
-            if (up_flag == 0) {
-                _mvx = chassis_pos_pid_calc(&chassis_x_pid, chassis_x_point);
-                _mvy = chassis_pos_pid_calc(&chassis_y_pid, chassis_y_point);
-            }
-            else if(up_flag == 1)
-            {
-                _mvx = 60;
-                _mvy = 0;
-            }
-            else if(up_flag == 2)
-            {
-                _mvx = 0;
-                _mvy = 0;
+            if (down_flag == 0) {
+                _mvx = (float)(usr_left_y * 200) / 4000.0;
+                _mvy = -(float)(usr_left_x * 200) / 4000.0;
+            } else if (down_flag == 1) {
+                if (general_state == LEFT_MODE) {
+                    _mvy = 15;
+                    _mvx = 0;
+                } else if (general_state == RIGHT_MODE) {
+                    _mvy = -15;
+                    _mvx = 0;
+                }
             }
             mvx = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
             mvy = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
             mwc = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+        } else if (run_state == AUTO_MODE) {
+            if (up_flag == 0) {
+                _mvx = chassis_pos_pid_calc(&chassis_x_pid, chassis_x_point);
+                _mvy = chassis_pos_pid_calc(&chassis_y_pid, chassis_y_point);
+                mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+            } else if (up_flag == 1) {
+                _mvx = 60;
+                _mvy = 0;
+                mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+            } else if (up_flag == 2) {
+                _mvx = 0;
+                _mvy = 0;
+                mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+            } else if (up_flag == 3) {
+                _mvx = (float)(usr_left_y * 200) / 4000.0;
+                _mvy = -(float)(usr_left_x * 200) / 4000.0;
+                mwc  = chassis_yaw_pid_calc(&chassis_yaw_pid, chassis_yaw);
+            }
+            mvx = _mvx * cos(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * sin(((chassis_yaw - chassis_offset) * PI) / 180);
+            mvy = -_mvx * sin(((chassis_yaw - chassis_offset) * PI) / 180) + _mvy * cos(((chassis_yaw - chassis_offset) * PI) / 180);
         } else {
             chassis_x_pid.SetPoint = chassis_x_point;
             chassis_y_pid.SetPoint = chassis_y_point;

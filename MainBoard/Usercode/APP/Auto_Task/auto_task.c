@@ -59,13 +59,13 @@ void m_auto_Task(void *argument)
                 break;
             case AUTO_SEED_MODE:
                 // 转换至空闲状态
-                if (btn_Btn4 == 1 && auto_seed_state == Auto_Seed_Ready) {
+                if (btn_LeftCrossLeft == 1 && auto_seed_state == Auto_Seed_Ready) {
                     auto_state = AUTO_IDLE_MODE;
                 }
                 break;
             case AUTO_BALL_MODE:
                 // 转换至空闲状态
-                if (btn_Btn4 == 1 && auto_ball_state == Auto_Ball_Ready) {
+                if (btn_LeftCrossLeft == 1 && auto_ball_state == Auto_Ball_Ready) {
                     auto_state = AUTO_IDLE_MODE;
                 }
                 break;

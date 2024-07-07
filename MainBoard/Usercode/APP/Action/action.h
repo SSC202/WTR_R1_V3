@@ -3,6 +3,8 @@
 
 #include "usermain.h"
 
+extern uint8_t down_flag;
+
 void Reset_Action(void);
 
 void Seed_Grip_Action(void);

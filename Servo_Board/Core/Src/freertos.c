@@ -49,7 +49,6 @@
 uint8_t board_rev_buffer[7];
 uint8_t laserx_rev_buffer[11];
 uint8_t lasery_rev_buffer[11];
-uint8_t servo_flag[3];
 
 uint8_t laser_y_buffer[5];
 uint8_t laser_x_buffer[5];
@@ -71,14 +70,6 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-osThreadId_t servoTaskHandle;
-const osThreadAttr_t servoTask_attributes = {
-    .name       = "servoTask",
-    .stack_size = 128 * 4,
-    .priority   = (osPriority_t)osPriorityNormal,
-};
-void ServoTask(void *argument);
-
 osThreadId_t laserTaskHandle;
 const osThreadAttr_t laserTask_attributes = {
     .name       = "laserTask",
@@ -143,27 +134,15 @@ void MX_FREERTOS_Init(void)
 void StartDefaultTask(void *argument)
 {
     /* USER CODE BEGIN StartDefaultTask */
-    HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1); // 左左D
-    HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_2); // 左右C
-    HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_3); // 左前B
-    HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_4); // 左轨A
-    HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_1); // 右左W
-    HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_2); // 右右X
-    HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_3); // 右前Y
-    HAL_TIM_PWM_Start(&htim8, TIM_CHANNEL_4); // 右轨Z
-    osDelay(1000);
+    osDelay(3000);
     HAL_UART_Transmit(&huart6, (uint8_t *)laser_msg, 5, 0xFF);
     HAL_UART_Transmit(&huart7, (uint8_t *)laser_msg, 5, 0xFF);
 
-    osDelay(500);
-    HAL_UART_Receive_DMA(&huart8, board_rev_buffer, 7);
-    __HAL_UART_ENABLE_IT(&huart8, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart7, laserx_rev_buffer, 11);
     __HAL_UART_ENABLE_IT(&huart7, UART_IT_IDLE);
     HAL_UART_Receive_DMA(&huart6, lasery_rev_buffer, 11);
     __HAL_UART_ENABLE_IT(&huart6, UART_IT_IDLE);
 
-    servoTaskHandle = osThreadNew(ServoTask, NULL, &servoTask_attributes);
     laserTaskHandle = osThreadNew(LaserTask, NULL, &laserTask_attributes);
     /* Infinite loop */
     for (;;) {
@@ -174,42 +153,11 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-void ServoTask(void *argument)
-{
-    for (;;) {
-        if (servo_flag[0] == 1) {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 1500);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 1550);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 1450);
-        } else {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1800);
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_2, 1200);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_1, 1200);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_2, 1700);
-        }
-        if (servo_flag[1] == 1) {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 1850);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_3, 1150);
-        } else {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_3, 1500);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_3, 1500);
-        }
-        if (servo_flag[2] == 1) {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_4, 1600);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_4, 1600);
-        } else {
-            __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_4, 2400);
-            __HAL_TIM_SET_COMPARE(&htim8, TIM_CHANNEL_4, 600);
-        }
-        osDelay(1);
-    }
-}
 
 void LaserTask(void *argument)
 {
     for (;;) {
-        laser_send_msg[0] = 0xCC;
+        laser_send_msg[0]  = 0xCC;
         laser_send_msg[11] = 0xDD;
         if (x_flag == 1) {
             laser_send_msg[1] = laser_x_buffer[0];
@@ -220,12 +168,12 @@ void LaserTask(void *argument)
             x_flag            = 0;
         }
         if (y_flag == 1) {
-            laser_send_msg[6] = laser_y_buffer[0];
-            laser_send_msg[7] = laser_y_buffer[1];
-            laser_send_msg[8] = laser_y_buffer[2];
-            laser_send_msg[9] = laser_y_buffer[3];
+            laser_send_msg[6]  = laser_y_buffer[0];
+            laser_send_msg[7]  = laser_y_buffer[1];
+            laser_send_msg[8]  = laser_y_buffer[2];
+            laser_send_msg[9]  = laser_y_buffer[3];
             laser_send_msg[10] = laser_y_buffer[4];
-            y_flag            = 0;
+            y_flag             = 0;
         }
         HAL_UART_Transmit(&huart3, laser_send_msg, 12, 0xFF);
         osDelay(1);
@@ -234,24 +182,14 @@ void LaserTask(void *argument)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart->Instance == UART8) {
-        if (board_rev_buffer[0] == 0xAA && board_rev_buffer[1] == 0xAA && board_rev_buffer[5] == 0xBB && board_rev_buffer[6] == 0xBB) {
-            servo_flag[0] = board_rev_buffer[2];
-            servo_flag[1] = board_rev_buffer[3];
-            servo_flag[2] = board_rev_buffer[4];
-        } else {
-            for (int i = 0; i < 7; i++) {
-                board_rev_buffer[i] = 0;
-            }
-        }
-    } else if (huart->Instance == UART7) {
+    if (huart->Instance == UART7) {
         if (laserx_rev_buffer[0] == 0x44 && laserx_rev_buffer[1] == 0x3D && laserx_rev_buffer[7] == 0x6D && laserx_rev_buffer[8] == 0x0D && laserx_rev_buffer[9] == 0x0A) {
             laser_x_buffer[0] = laserx_rev_buffer[2];
             laser_x_buffer[1] = laserx_rev_buffer[3];
             laser_x_buffer[2] = laserx_rev_buffer[4];
             laser_x_buffer[3] = laserx_rev_buffer[5];
             laser_x_buffer[4] = laserx_rev_buffer[6];
-            x_flag = 1;
+            x_flag            = 1;
         } else {
             for (int i = 0; i < 11; i++) {
                 laserx_rev_buffer[i] = 0;
@@ -264,7 +202,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             laser_y_buffer[2] = lasery_rev_buffer[4];
             laser_y_buffer[3] = lasery_rev_buffer[5];
             laser_y_buffer[4] = lasery_rev_buffer[6];
-            y_flag = 1;
+            y_flag            = 1;
         } else {
             for (int i = 0; i < 11; i++) {
                 lasery_rev_buffer[i] = 0;

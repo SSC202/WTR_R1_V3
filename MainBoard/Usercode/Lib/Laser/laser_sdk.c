@@ -2,15 +2,15 @@
 #include "userconfig.h"
 #include <stdio.h>
 
-int chassis_laser_x;
-int chassis_laser_y;
+__IO int chassis_laser_x;
+__IO int chassis_laser_y;
 
 uint8_t laser_x_data[5];
 uint8_t laser_y_data[5];
 
 static uint8_t _count = 0;
-static uint8_t j     = 0;
-uint8_t laser_temp[1];
+static uint8_t _j     = 0;
+__IO uint8_t laser_temp[1];
 
 /**
  * @brief   激光解码函数
@@ -26,18 +26,18 @@ uint8_t Laser_Decode(void)
                 _count = 0;
             break;
         case 1:
-            laser_x_data[j] = laser_temp[0];
-            j++;
-            if (j >= 5) {
-                j = 0;
+            laser_x_data[_j] = laser_temp[0];
+            _j++;
+            if (_j >= 5) {
+                _j = 0;
                 _count++;
             }
             break;
         case 2:
-            laser_y_data[j] = laser_temp[0];
-            j++;
-            if (j >= 5) {
-                j = 0;
+            laser_y_data[_j] = laser_temp[0];
+            _j++;
+            if (_j >= 5) {
+                _j = 0;
                 _count++;
             }
             break;

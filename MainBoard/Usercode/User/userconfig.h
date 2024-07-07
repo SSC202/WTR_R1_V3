@@ -24,6 +24,7 @@ extern "C" {
 #define ID_DIRECT_CHOOSE    2
 #define ID_RUN              3
 #define ID_MODE             4
+#define ID_UP               5
 
 #define chassis_R           (152 * 0.001) // 全向轮半径
 #define chassis_r           (600 * 0.001) // 底盘半径
@@ -81,24 +82,33 @@ extern char auto_ball_ready_msg[20];
 extern char auto_ball_go_msg[20];
 extern char auto_ball_fire_msg[20];
 
+extern mavlink_joystick_air_dashboard_set_title_t mav_up_choose_title;
+extern mavlink_joystick_air_dashboard_set_msg_t mav_up_choose_msg;
+extern char up_choose_title[20];
+extern char up_choose_msg_ok[20];
+extern char up_choose_msg_no[20];
+
 /*****************************************************************************
  * 点位定义
  */
-extern float left_grip_seed_point_x[6];  // 左侧取苗纵向坐标
-extern float left_grip_seed_point_y[6];  // 左侧取苗横向坐标
-extern float left_plant_seed_point_x[6]; // 左侧放苗纵向坐标
-extern float left_plant_seed_point_y[6]; // 左侧放苗横向坐标
-extern float left_plant_seed_point_ax[6];       // 左侧放苗激光标定点(车前)
-extern float left_plant_seed_point_ay[6];       // 左侧放苗激光标定点(车侧)
-extern float left_ball_point_x[12];      // 左侧球纵向坐标
-extern float left_ball_point_y[12];      // 左侧球横向坐标
+extern float left_grip_seed_point_x[6];   // 左侧取苗纵向坐标
+extern float left_grip_seed_point_y[6];   // 左侧取苗横向坐标
+extern float left_grip_seed_point_ay[6];  // 左侧取苗横向激光标定点(车侧)
+extern float left_plant_seed_point_x[6];  // 左侧放苗纵向坐标
+extern float left_plant_seed_point_y[6];  // 左侧放苗横向坐标
+extern float left_plant_seed_point_ax[6]; // 左侧放苗激光标定点(车前)
+extern float left_plant_seed_point_ay[6]; // 左侧放苗激光标定点(车侧)
+extern float left_ball_point_x[7];       // 左侧球纵向坐标
+extern float left_ball_point_y[7];       // 左侧球横向坐标
 
-extern float right_grip_seed_point_x[6];  // 右侧取苗纵向坐标
-extern float right_grip_seed_point_y[6];  // 右侧取苗横向坐标
-extern float right_plant_seed_point_x[6]; // 右侧放苗纵向坐标
-extern float right_plant_seed_point_y[6]; // 右侧放苗横向坐标
-extern float right_ball_point_x[12];      // 右侧球纵向坐标
-extern float right_ball_point_y[12];      // 右侧球横向坐标
+extern float right_grip_seed_point_x[6];   // 右侧取苗纵向坐标
+extern float right_grip_seed_point_y[6];   // 右侧取苗横向坐标
+extern float right_plant_seed_point_x[6];  // 右侧放苗纵向坐标
+extern float right_plant_seed_point_y[6];  // 右侧放苗横向坐标
+extern float right_plant_seed_point_ax[6]; // 右侧放苗激光标定点(车前)
+extern float right_plant_seed_point_ay[6];
+extern float right_ball_point_x[7]; // 右侧球纵向坐标
+extern float right_ball_point_y[7]; // 右侧球横向坐标
 
 #ifdef __cplusplus
 }
