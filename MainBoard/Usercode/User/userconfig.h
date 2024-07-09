@@ -24,7 +24,7 @@ extern "C" {
 #define ID_DIRECT_CHOOSE    2
 #define ID_RUN              3
 #define ID_MODE             4
-#define ID_UP               5
+#define ID_RST               5
 
 #define chassis_R           (152 * 0.001) // 全向轮半径
 #define chassis_r           (600 * 0.001) // 底盘半径
@@ -82,11 +82,11 @@ extern char auto_ball_ready_msg[20];
 extern char auto_ball_go_msg[20];
 extern char auto_ball_fire_msg[20];
 
-extern mavlink_joystick_air_dashboard_set_title_t mav_up_choose_title;
-extern mavlink_joystick_air_dashboard_set_msg_t mav_up_choose_msg;
-extern char up_choose_title[20];
-extern char up_choose_msg_ok[20];
-extern char up_choose_msg_no[20];
+extern mavlink_joystick_air_dashboard_set_title_t mav_rst_choose_title;
+extern mavlink_joystick_air_dashboard_set_msg_t mav_rst_choose_msg;
+extern char rst_choose_title[20];
+extern char rst_choose_msg[20];
+extern char norst_choose_msg[20];
 
 /*****************************************************************************
  * 点位定义

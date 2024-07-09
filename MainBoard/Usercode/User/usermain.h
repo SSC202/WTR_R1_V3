@@ -27,6 +27,8 @@ extern "C" {
 #include "userdebug.h"
 #include "usermain_task.h"
 
+extern uint8_t rst_flag;
+
 #ifdef __cplusplus
 }
 #endif

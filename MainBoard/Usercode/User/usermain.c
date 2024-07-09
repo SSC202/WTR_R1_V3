@@ -8,10 +8,12 @@ char debug_title[20] = "Debug";
 char debug_msg[20];
 mavlink_joystick_air_dashboard_set_title_t mav_debug_title;
 mavlink_joystick_air_dashboard_set_msg_t mav_debug_msg;
+uint8_t rst_flag = 0;
 
 void StartDefaultTask(void *argument)
 {
     // Hardware Init
+    rst_flag = 0;
     m_RemoteCtl_Init(); // 遥控器初始化
     // m_Chassis_Laser_Init(); // 激光初始化
     m_Chassis_Init(); // DJI电机初始化
@@ -35,6 +37,10 @@ void StartDefaultTask(void *argument)
         // 发送等待消息
         JoystickSwitchTitle(ID_DIRECT_CHOOSE, direct_choose_title, &mav_dir_choose_title);
         JoystickSwitchMsg(ID_DIRECT_CHOOSE, direct_choose_msg, &mav_dir_choose_msg);
+        JoystickSwitchTitle(ID_RST, rst_choose_title, &mav_rst_choose_title);
+        if (btn_Btn4 == 1) {
+            rst_flag = 1;
+        }
         // JoystickSwitchTitle(ID_UP, up_choose_title, &mav_up_choose_title);
         // 等待选择
         if (btn_KnobR == 1 && usr_right_x > 500.0f) {
@@ -46,6 +52,11 @@ void StartDefaultTask(void *argument)
             JoystickDelete(ID_DIRECT_CHOOSE, &mav_joystick_del); // 取消等待指令
             break;
         }
+        if (rst_flag == 0) {
+            JoystickSwitchMsg(ID_RST, norst_choose_msg, &mav_dir_choose_msg);
+        } else if (rst_flag == 1) {
+            JoystickSwitchMsg(ID_RST, rst_choose_msg, &mav_dir_choose_msg);
+        }
         osDelay(1);
     } while (1);
 
@@ -56,22 +67,24 @@ void StartDefaultTask(void *argument)
 
     osDelay(100);
     // 初始化位置
-    v_1              = 0;
-    v_2              = 0;
-    v_3              = 0;
-    v_4              = 0;
-    arm_angle        = -140;
-    motor_l_gripseed = -1005;
-    motor_r_gripseed = -1005;
-    while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
-           ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
-           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
-           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
-        osDelay(1);
+    v_1       = 0;
+    v_2       = 0;
+    v_3       = 0;
+    v_4       = 0;
+    arm_angle = -140;
+    if(rst_flag == 0)
+    {
+        unitree_right_pos = -PI / 2 - 0.2;
+        unitree_left_pos  = PI / 2 + 0.2;
+        motor_l_gripseed  = -1005;
+        motor_r_gripseed  = -1005;
+        while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
+               ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
+               ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
+               ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
+            osDelay(1);
+        }
     }
-
-    unitree_right_pos = -PI / 2 - 0.2;
-    unitree_left_pos  = PI / 2 + 0.2;
 
     chassis_pid_init(&chassis_yaw_pid, 1.0, 0.0, 0.15);
     chassis_yaw_pid.SetPoint = chassis_offset;

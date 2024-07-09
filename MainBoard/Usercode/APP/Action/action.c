@@ -36,20 +36,22 @@ void Reset_Action(void)
      *      6. 电机处于高位;
      *      7. 前侧限位板关闭
      */
-    unitree_right_pos = -PI / 4;
-    unitree_left_pos  = PI / 4;
-    Seed_Grip();
-    Seed_Deposit_Close();
-    Seed_Plant_Close();
-    Seed_Deposit_Buffer_Open();
-    Seed_Front_Close();
-    motor_l_gripseed = -1005;
-    motor_r_gripseed = -1005;
-    while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
-           ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
-           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
-           ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
-        osDelay(1);
+    if (rst_flag == 0) {
+        unitree_right_pos = -PI / 4;
+        unitree_left_pos  = PI / 4;
+        Seed_Grip();
+        Seed_Deposit_Close();
+        Seed_Plant_Close();
+        Seed_Deposit_Buffer_Open();
+        Seed_Front_Close();
+        motor_l_gripseed = -1005;
+        motor_r_gripseed = -1005;
+        while (((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) > 5.0f) ||
+               ((hDJI[0][1].AxisData.AxisAngle_inDegree - motor_r_gripseed) < -5.0f) ||
+               ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) > 5.0f) ||
+               ((hDJI[1][1].AxisData.AxisAngle_inDegree - motor_l_gripseed) < -5.0f)) {
+            osDelay(1);
+        }
     }
 }
 
@@ -82,6 +84,9 @@ void Seed_Grip_Action(void)
      * 取苗动作
      */
     // 第一段动作
+    while (btn_KnobR != 1) {
+        osDelay(1);
+    }
     // 宇树电机运动至超过苗轴线
     unitree_right_pos = PI / 2 - 0.25;
     unitree_left_pos  = -PI / 2 + 0.25;
@@ -126,8 +131,8 @@ void Seed_Grip_Action(void)
         Seed_Deposit_Buffer_Close();
         osDelay(500);
         if (seed_count == 0) {
-            motor_l_plantseed = 980;
-            motor_r_plantseed = -980;
+            motor_l_plantseed = 960;
+            motor_r_plantseed = -960;
         } else if (seed_count == 1) {
             motor_l_plantseed = 770;
             motor_r_plantseed = -770;
@@ -242,12 +247,14 @@ void Seed_Plant_Action(void)
         }
         // 推苗校正
         while (btn_KnobR != 1) {
-            if (btn_LeftCrossRight == 1) {
+            if (btn_LeftCrossUp == 1) {
                 motor_l_plantseed += 20;
-                motor_r_plantseed -= 20;
             } else if (btn_LeftCrossDown == 1) {
                 motor_l_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
                 motor_r_plantseed += 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
             }
             osDelay(50);
         }
@@ -300,19 +307,21 @@ void Seed_Plant_Action(void)
         }
         // 推苗校正
         while (btn_KnobR != 1) {
-            if (btn_LeftCrossRight == 1) {
+            if (btn_LeftCrossUp == 1) {
                 motor_l_plantseed += 20;
-                motor_r_plantseed -= 20;
             } else if (btn_LeftCrossDown == 1) {
                 motor_l_plantseed -= 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
                 motor_r_plantseed += 20;
             }
             osDelay(50);
         }
         seed_count--;
     } else if (seed_count == 4) {
-        motor_l_plantseed = 580;
-        motor_r_plantseed = -580;
+        motor_l_plantseed = 600;
+        motor_r_plantseed = -600;
         while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
                ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
@@ -320,11 +329,13 @@ void Seed_Plant_Action(void)
             osDelay(1);
         }
         while (btn_KnobR != 1) {
-            if (btn_LeftCrossRight == 1) {
+            if (btn_LeftCrossUp == 1) {
                 motor_l_plantseed += 20;
-                motor_r_plantseed -= 20;
             } else if (btn_LeftCrossDown == 1) {
                 motor_l_plantseed -= 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
                 motor_r_plantseed += 20;
             }
             osDelay(50);
@@ -340,19 +351,21 @@ void Seed_Plant_Action(void)
             osDelay(1);
         }
         while (btn_KnobR != 1) {
-            if (btn_LeftCrossRight == 1) {
+            if (btn_LeftCrossUp == 1) {
                 motor_l_plantseed += 20;
-                motor_r_plantseed -= 20;
             } else if (btn_LeftCrossDown == 1) {
                 motor_l_plantseed -= 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
                 motor_r_plantseed += 20;
             }
             osDelay(50);
         }
         seed_count--;
     } else if (seed_count == 2) {
-        motor_l_plantseed = 980;
-        motor_r_plantseed = -980;
+        motor_l_plantseed = 960;
+        motor_r_plantseed = -960;
         while (((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) > 2.0f) ||
                ((hDJI[2][1].AxisData.AxisAngle_inDegree - motor_r_plantseed) < -2.0f) ||
                ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) > 2.0f) ||
@@ -360,11 +373,13 @@ void Seed_Plant_Action(void)
             osDelay(1);
         }
         while (btn_KnobR != 1) {
-            if (btn_LeftCrossRight == 1) {
+            if (btn_LeftCrossUp == 1) {
                 motor_l_plantseed += 20;
-                motor_r_plantseed -= 20;
             } else if (btn_LeftCrossDown == 1) {
                 motor_l_plantseed -= 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
                 motor_r_plantseed += 20;
             }
             osDelay(50);
@@ -379,8 +394,32 @@ void Seed_Plant_Action(void)
                ((hDJI[3][1].AxisData.AxisAngle_inDegree - motor_l_plantseed) < -2.0f)) {
             osDelay(1);
         }
+        while (btn_KnobR != 1) {
+            if (btn_LeftCrossUp == 1) {
+                motor_l_plantseed += 20;
+            } else if (btn_LeftCrossDown == 1) {
+                motor_l_plantseed -= 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
+                motor_r_plantseed += 20;
+            }
+            osDelay(50);
+        }
         seed_count--;
     } else if (seed_count == 0) {
+        while (btn_KnobR != 1) {
+            if (btn_LeftCrossUp == 1) {
+                motor_l_plantseed += 20;
+            } else if (btn_LeftCrossDown == 1) {
+                motor_l_plantseed -= 20;
+            } else if (btn_RightCrossUp == 1) {
+                motor_r_plantseed -= 20;
+            } else if (btn_RightCrossDown == 1) {
+                motor_r_plantseed += 20;
+            }
+            osDelay(50);
+        }
         seed_count = 0;
     }
     osDelay(1);

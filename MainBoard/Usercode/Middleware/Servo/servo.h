@@ -79,7 +79,7 @@ extern "C" {
 
 #define Ball_Servo_Grip()                                                                 \
     do {                                                                                  \
-        __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 900); \
+        __HAL_TIM_SET_COMPARE(&Ball_Middle_Timer_Handle, Ball_Middle_Timer_Channel, 700); \
     } while (0) // 夹爪抓取动作
 
 #define Ball_Servo_Reset()                                                                 \
@@ -153,7 +153,7 @@ extern "C" {
 #define Seed_Front_Close()                                                                          \
     do {                                                                                            \
         __HAL_TIM_SET_COMPARE(&Left_Front_Seed_Timer_Handle, Left_Front_Seed_Timer_Channel, 2000);  \
-        __HAL_TIM_SET_COMPARE(&Right_Front_Seed_Timer_Handle, Right_Front_Seed_Timer_Channel, 1300); \
+        __HAL_TIM_SET_COMPARE(&Right_Front_Seed_Timer_Handle, Right_Front_Seed_Timer_Channel, 1100); \
     } while (0) // 前侧限位板关闭
 
 #define Seed_Front_Open()                                                                            \

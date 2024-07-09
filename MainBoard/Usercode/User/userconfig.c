@@ -16,11 +16,11 @@ char run_title[20]      = "Run";
 char run_auto_msg[20]   = "AutoMode";
 char run_handle_msg[20] = "HandleMode";
 
-mavlink_joystick_air_dashboard_set_title_t mav_up_choose_title;
-mavlink_joystick_air_dashboard_set_msg_t mav_up_choose_msg;
-char up_choose_title[20]  = "UpChoose";
-char up_choose_msg_ok[20] = "NoNeed_Up";
-char up_choose_msg_no[20] = "Need_Up";
+mavlink_joystick_air_dashboard_set_title_t mav_rst_choose_title;
+mavlink_joystick_air_dashboard_set_msg_t mav_rst_choose_msg;
+char rst_choose_title[20]  = "RstChoose";
+char rst_choose_msg[20] = "NoStart";
+char norst_choose_msg[20] = "Start";
 
 mavlink_joystick_air_dashboard_set_title_t mav_dir_choose_title;
 mavlink_joystick_air_dashboard_set_msg_t mav_dir_choose_msg;

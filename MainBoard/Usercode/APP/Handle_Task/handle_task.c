@@ -76,7 +76,7 @@ void m_handle_Task(void *argument)
                 // 发送状态指令
                 JoystickSwitchTitle(ID_MODE, mode_title, &mav_mode_title);
                 JoystickSwitchMsg(ID_MODE, mode_seed_msg, &mav_mode_msg);
-                if (btn_LeftCrossLeft == 1 && handle_seed_state == Handle_Seed_Ready) {
+                if (btn_Btn5 == 1 && handle_seed_state == Handle_Seed_Ready) {
                     handle_state = HANDLE_IDLE_MODE;
                 }
                 break;
@@ -85,7 +85,7 @@ void m_handle_Task(void *argument)
                 JoystickSwitchTitle(ID_MODE, mode_title, &mav_mode_title);
                 JoystickSwitchMsg(ID_MODE, mode_ball_msg, &mav_mode_msg);
                 // 1. 转换到空闲状态
-                if (btn_LeftCrossLeft == 1 && handle_ball_state == Handle_Ball_Ready) {
+                if (btn_Btn5 == 1 && handle_ball_state == Handle_Ball_Ready) {
                     handle_state = HANDLE_IDLE_MODE;
                 }
                 break;
