@@ -234,7 +234,7 @@ void Seed_Plant_Action(void)
     down_flag = 0;
     osDelay(100);
     Seed_Plant_Close();
-    osDelay(500);
+    osDelay(100);
     // 推苗
     if (seed_count == 6) {
         motor_l_plantseed = 385;
