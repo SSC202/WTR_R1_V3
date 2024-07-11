@@ -33,7 +33,7 @@ extern "C" {
 #include "wit_c_sdk.h"
 #include <stdio.h>
 
-#define HUART_CURRENT huart5
+#define HUART_CURRENT huart7
 
 #define ACC_UPDATE    0x01
 #define GYRO_UPDATE   0x02

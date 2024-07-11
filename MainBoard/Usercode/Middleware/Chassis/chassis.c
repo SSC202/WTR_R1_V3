@@ -169,8 +169,8 @@ void m_Chassis_Ctl_Task(void *argument)
             }
             // 手动模式下为遥控控制底盘
             if (down_flag == 0) {
-                _mvx = (float)(usr_left_y * 200) / 4000.0;
-                _mvy = -(float)(usr_left_x * 200) / 4000.0;
+                _mvx = (float)(usr_left_y * 300) / 4000.0;
+                _mvy = -(float)(usr_left_x * 300) / 4000.0;
             } else if (down_flag == 1) {
                 if (general_state == LEFT_MODE) {
                     _mvy = 15;

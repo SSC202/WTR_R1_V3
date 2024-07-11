@@ -203,6 +203,7 @@ NVIC.TIM1_UP_IRQn=true\:15\:0\:false\:false\:true\:false\:false\:true\:true
 NVIC.TimeBase=TIM1_UP_IRQn
 NVIC.TimeBaseIP=TIM1
 NVIC.UART5_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true\:true
+NVIC.UART7_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true\:true
 NVIC.USART1_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true\:true
 NVIC.USART2_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true\:true
 NVIC.USART3_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true\:true
